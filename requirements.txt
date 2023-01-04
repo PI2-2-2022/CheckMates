@@ -1,1 +1,4 @@
+python-dotenv==0.14.0
+chess==1.9.4
 stockfish==3.28.0
+
