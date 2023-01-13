@@ -3,7 +3,7 @@ class Communication:
     def __init__(self) -> None:
         pass
 
-    def get_move(targetBitBoard, currentBitBoard): #COMMUNICATION
+    def get_move(self, targetBitBoard, currentBitBoard): #COMMUNICATION
         to = None
         origin = None
         for idx, x in enumerate(targetBitBoard):
@@ -17,7 +17,7 @@ class Communication:
 
         return f'{origin}{to}'
 
-    def get_next_board(): #COMMUNICATION
+    def get_next_board(self): #COMMUNICATION
     # TODO fazer a integracao e recuperar a matriz de bit por aqui
         input("Aguardando proxima jogada (recebimento do proximo bitboard)")
         return [
@@ -31,7 +31,7 @@ class Communication:
             [1, 1, 1, 1, 1, 1, 1, 1],
         ]
 
-    def fen_to_matrix(fen): # COMMUNICATION
+    def fen_to_matrix(self, fen): # COMMUNICATION
         rows = str(fen.split(' ')[0]).split("/")
         matrix = []
         for row in rows:
@@ -45,7 +45,7 @@ class Communication:
         return matrix
 
 
-    def matrix_to_bitboard(matrix): # COMMUNICATION
+    def matrix_to_bitboard(self, matrix): # COMMUNICATION
         for i in range(8):
             for j in range(8):
                 if (not matrix[i][j] == ' '):
@@ -54,6 +54,6 @@ class Communication:
                     matrix[i][j] = 0
         return matrix
 
-    def send_bit_board(bitBoard):# COMMUNICATION
+    def send_bit_board(self, bitBoard):# COMMUNICATION
     # TODO devolver o movimento para a eletronica
         return
