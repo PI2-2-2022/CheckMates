@@ -8,7 +8,7 @@ class Board:
     def __init__(self):
         pass
     
-    def get_new_board():
+    def get_new_board(self):
     # TODO implementar método que vai gerar um novo tabuleiro no ínicio de um novo jogo
         return 10
         
