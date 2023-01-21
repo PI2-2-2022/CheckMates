@@ -11,7 +11,7 @@ board = Board()
 load_dotenv()
 
 def main():
-    level = interface.get_level()
+    color = interface.get_color()
     stockfish = Stockfish(
         STOCKFISH_PATH,
         depth=20,
@@ -25,7 +25,7 @@ def main():
             # Default size is 16 MB. It's recommended that you increase this value, but keep it as some power of 2. E.g., if you're fine using 2 GB of RAM, set Hash to 2048 (11th power of 2).
             "Hash": 512,
             "MultiPV": 1,
-            "Skill Level": int(level),
+            "Skill Level": interface.get_level(),
             "Move Overhead": 10,
             "Minimum Thinking Time": 20,
             "Slow Mover": 100,
@@ -35,7 +35,7 @@ def main():
         },
     )
     board.update_board(STARTING_FEN)
-    interface.start_game(stockfish, STARTING_FEN, INITIAL_BOARD_BIT)
+    interface.start_game(stockfish, STARTING_FEN, INITIAL_BOARD_BIT, color)
 
 
 if __name__ == '__main__':
