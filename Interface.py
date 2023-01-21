@@ -34,11 +34,17 @@ class Interface:
             currentFen = stockfish.get_fen_position()
         while not validation.is_game_over():
             move = input('Insira sua jogada(ex.: e2e4): ')
-            stockfish.make_moves_from_current_position([move])
-            bestMove = stockfish.get_best_move()
-            stockfish.make_moves_from_current_position([bestMove])
-            currentFen = stockfish.get_fen_position()
-            matrix = communication.fen_to_matrix(currentFen)
-            currentBitBoard = communication.matrix_to_bitboard(matrix)
-            communication.send_bit_board(currentBitBoard)
-            board.update_board(currentFen)
+            if validation.is_valid_move(move, currentFen):
+                stockfish.make_moves_from_current_position([move])
+                bestMove = stockfish.get_best_move()
+                stockfish.make_moves_from_current_position([bestMove])
+                currentFen = stockfish.get_fen_position()
+                if validation.is_checkmate(currentFen):
+                    print("Checkmate, Jogador 1 ganhou" if board.turn == 'w' else "Checkmate, Jogador 2 ganhou")
+                    break
+                matrix = communication.fen_to_matrix(currentFen)
+                currentBitBoard = communication.matrix_to_bitboard(matrix)
+                communication.send_bit_board(currentBitBoard)
+                board.update_board(currentFen)
+            else:
+                print("Movimento inválido, tente novamente.")
