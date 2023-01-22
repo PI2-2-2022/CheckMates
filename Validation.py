@@ -12,6 +12,21 @@ class Validation:
     # TODO verificar checkmate, empate, vitoria, etc...
         return False
 
+    def is_game_over_or_drawn(self, currentFen: str) -> bool:
+        board = chess.Board(currentFen)
+        if board.is_checkmate() or board.is_stalemate() or board.is_insufficient_material():
+            return True
+        else:
+            return False
+
+    def is_stalemate(self, currentFen: str) -> bool:
+        board = chess.Board(currentFen)
+        return board.is_stalemate()
+
+    def is_insufficient_material(self, currentFen: str) -> bool:
+        board = chess.Board(currentFen)
+        return board.is_insufficient_material()
+
     def is_checkmate(self, fen: str) -> bool:
         board = chess.Board(fen)
         return board.is_checkmate()
