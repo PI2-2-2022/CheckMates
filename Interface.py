@@ -4,6 +4,7 @@ from Communication import Communication
 from Board import Board
 from stockfish import Stockfish
 from constants import STARTING_FEN
+import chess
 
 board = Board()
 validation = Validation()
@@ -32,15 +33,19 @@ class Interface:
             bestMove = stockfish.get_best_move()
             stockfish.make_moves_from_current_position([bestMove])
             currentFen = stockfish.get_fen_position()
-        while not validation.is_game_over():
-            move = input('Insira sua jogada(ex.: e2e4): ')
+        while not validation.is_game_over_or_drawn(currentFen):
+            give_up = input('Insira sua jogada(ex.: e2e4) ou digite "give up" para desistir: ')
+            if give_up == "give up":
+                print("Jogador desistiu, fim de jogo.")
+                break
+            move = give_up
             if validation.is_valid_move(move, currentFen):
                 stockfish.make_moves_from_current_position([move])
                 bestMove = stockfish.get_best_move()
                 stockfish.make_moves_from_current_position([bestMove])
                 currentFen = stockfish.get_fen_position()
                 if validation.is_checkmate(currentFen):
-                    print("Checkmate, Jogador 1 ganhou" if board.turn == 'w' else "Checkmate, Jogador 2 ganhou")
+                    print("Checkmate, Jogador 1 ganhou" if chess.Board(currentFen).turn == 'w' else "Checkmate, Jogador 2 ganhou")
                     break
                 matrix = communication.fen_to_matrix(currentFen)
                 currentBitBoard = communication.matrix_to_bitboard(matrix)
