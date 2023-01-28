@@ -1,5 +1,6 @@
 import serial
 import time
+import serial.tools.list_ports
 
 class Communication:
 
@@ -63,10 +64,16 @@ class Communication:
     
     def test_serializer_comunication(self, message):
         
-        serializer = serial.Serial('/dev/ttyACM0', 9600)
+        #extract COM port automatically
+        ports = list(serial.tools.list_ports.comports())
+        for p in ports:
+            pathCOMPort = str(p).split('-')[0].strip()
+            print(pathCOMPort)
+            
+        serializer = serial.Serial(pathCOMPort, 9600)
         
         time.sleep(2) # wait for communication to get established
         
-        serializer.write(message.encode())
+        serializer.write(message.encode()) # messages needs to be sent in binary
         
         serializer.close()
