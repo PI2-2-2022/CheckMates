@@ -1,3 +1,6 @@
+import serial
+import time
+
 class Communication:
 
     def __init__(self) -> None:
@@ -57,3 +60,13 @@ class Communication:
     def send_bit_board(self, bitBoard):# COMMUNICATION
     # TODO devolver o movimento para a eletronica
         return
+    
+    def test_serializer_comunication(self, message):
+        
+        serializer = serial.Serial('/dev/ttyACM0', 9600)
+        
+        time.sleep(2) # wait for communication to get established
+        
+        serializer.write(message.encode())
+        
+        serializer.close()
