@@ -1,28 +1,39 @@
 from stockfish import Stockfish
+from Board import Board
+from Interface import Interface
+from constants import STARTING_FEN, INITIAL_BOARD_BIT, STOCKFISH_PATH
 
-stockfish = Stockfish(path="./stockfish_15/stockfish-ubuntu-20.04-x86-64")
 
-class Game:
-    def __init__(self):
-        stockfish.get_board_visual()
-        # stockfish.set_position(["e2e4", "e7e6"])
-        # stockfish.make_moves_from_current_position(["g4d7", "a8b8", "f1d1"])
-        # stockfish.set_fen_position("rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2")
-        # stockfish.is_fen_valid("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-        # stockfish.is_fen_valid("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") # will return False, in this case because the FEN is missing two of the six required fields.
-        # stockfish.get_best_move()
-        # stockfish.get_best_move_time(1000)
-        # stockfish.is_move_correct('a2a3')
-        # stockfish.get_top_moves(3)
-        # stockfish.get_board_visual()
-        # stockfish.send_quit_command()
+interface = Interface()
+board = Board()
 
-    def getStatus(self):
-        print(stockfish.get_board_visual())
+def main():
+    color = interface.get_color()
+    stockfish = Stockfish(
+        STOCKFISH_PATH,
+        depth=20,
+        parameters={
+            "Debug Log File": "",
+            "Contempt": 0,
+            "Min Split Depth": 0,
+            # More threads will make the engine stronger, but should be kept at less than the number of logical processors on your computer.
+            "Threads": 1,
+            "Ponder": "false",
+            # Default size is 16 MB. It's recommended that you increase this value, but keep it as some power of 2. E.g., if you're fine using 2 GB of RAM, set Hash to 2048 (11th power of 2).
+            "Hash": 512,
+            "MultiPV": 1,
+            "Skill Level": interface.get_level(),
+            "Move Overhead": 10,
+            "Minimum Thinking Time": 20,
+            "Slow Mover": 100,
+            "UCI_Chess960": "false",
+            "UCI_LimitStrength": "false",
+            "UCI_Elo": 1350,
+        },
+    )
+    board.update_board(STARTING_FEN)
+    interface.start_game(stockfish, STARTING_FEN, INITIAL_BOARD_BIT, color)
 
-    def getBestMove(self):
-        print(stockfish.get_best_move_time(1000))
 
-game = Game()
-game.getStatus()
-game.getBestMove()
+if __name__ == '__main__':
+    main()
