@@ -7,34 +7,6 @@ class Communication:
     def __init__(self) -> None:
         pass
 
-    def get_move(self, targetBitBoard, currentBitBoard):  # COMMUNICATION
-        to = None
-        origin = None
-        for idx, x in enumerate(targetBitBoard):
-            for idy, y in enumerate(x):
-                row = 8 - idx
-                column = chr(idy + 97)
-                if targetBitBoard[idx][idy] == 0 and currentBitBoard[idx][idy] == 1:
-                    origin = f"{column}{row}"
-                elif targetBitBoard[idx][idy] == 1 and currentBitBoard[idx][idy] == 0:
-                    to = f"{column}{row}"
-
-        return f"{origin}{to}"
-
-    def get_next_board(self):  # COMMUNICATION
-        # TODO fazer a integracao e recuperar a matriz de bit por aqui
-        input("Aguardando proxima jogada (recebimento do proximo bitboard)")
-        return [
-            [1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 0, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1],
-        ]
-
     def fen_to_matrix(self, fen):  # COMMUNICATION
         rows = str(fen.split(" ")[0]).split("/")
         matrix = []
@@ -76,6 +48,19 @@ class Communication:
 
         serializer.close()
 
-    def send_endgame_message(self, message):
-        # TODO mostrar a mensagem de fim de jogo na telinha
+    def send_message(self, message):
+        # TODO mostrar as mensagem no display
         print(message)
+
+    def request_bitBoard(self, bitboard):
+        # TODO comunicação com a eletrônica que retorna a bitBoard Atual
+        temp = input("Movimento da IA ou movimento do usuario (e2e4)")
+        if temp == "skip":
+            return bitboard
+        else:
+            # TODO receber 'e2e4', transformar em bitboard para simular o retorno da eletronica
+            return bitboard
+
+    def get_give_up(self):
+        # TODO caso o usuario desista do jogo
+        return

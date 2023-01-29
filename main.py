@@ -1,15 +1,15 @@
 from stockfish import Stockfish
-from Board import Board
 from Interface import Interface
-from constants import STARTING_FEN, INITIAL_BOARD_BIT, STOCKFISH_PATH
+from constants import STOCKFISH_PATH
 
 
 interface = Interface()
-board = Board()
 
 
 def main():
+    level = interface.get_level()
     color = interface.get_color()
+
     stockfish = Stockfish(
         STOCKFISH_PATH,
         depth=20,
@@ -23,7 +23,7 @@ def main():
             # Default size is 16 MB. It's recommended that you increase this value, but keep it as some power of 2. E.g., if you're fine using 2 GB of RAM, set Hash to 2048 (11th power of 2).
             "Hash": 512,
             "MultiPV": 1,
-            "Skill Level": interface.get_level(),
+            "Skill Level": level,
             "Move Overhead": 10,
             "Minimum Thinking Time": 20,
             "Slow Mover": 100,
@@ -32,8 +32,7 @@ def main():
             "UCI_Elo": 1350,
         },
     )
-    board.update_board(STARTING_FEN)
-    interface.start_game(stockfish, STARTING_FEN, INITIAL_BOARD_BIT, color)
+    interface.start_game(stockfish, color)
 
 
 if __name__ == "__main__":
