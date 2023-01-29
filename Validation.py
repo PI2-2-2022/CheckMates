@@ -1,20 +1,29 @@
-from constants import STOCKFISH_PATH
-from stockfish import Stockfish
 import chess
+from Communication import Communication
+
 
 class Validation:
     # Classe responsável por administrar as regras e violações do jogo
 
     def __init__(self) -> None:
-        pass    
-        
-    def is_game_over(self): # VALIDATION
-    # TODO verificar checkmate, empate, vitoria, etc...
-        return False
+        pass
 
     def is_game_over_or_drawn(self, currentFen: str) -> bool:
         board = chess.Board(currentFen)
-        if board.is_checkmate() or board.is_stalemate() or board.is_insufficient_material():
+
+        if board.is_checkmate():
+            message = "Check Mate!"
+        if board.is_stalemate():
+            message = "Stale Mate!"
+        if board.is_insufficient_material():
+            message = "Peças insuficientes!"
+
+        if (
+            board.is_checkmate()
+            or board.is_stalemate()
+            or board.is_insufficient_material()
+        ):
+            Communication.send_endgame_message(message)
             return True
         else:
             return False

@@ -7,6 +7,7 @@ from constants import STARTING_FEN, INITIAL_BOARD_BIT, STOCKFISH_PATH
 interface = Interface()
 board = Board()
 
+
 def main():
     color = interface.get_color()
     stockfish = Stockfish(
@@ -35,5 +36,5 @@ def main():
     interface.start_game(stockfish, STARTING_FEN, INITIAL_BOARD_BIT, color)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
