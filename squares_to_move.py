@@ -1,12 +1,13 @@
 SQUARE = 1
 HALF_SQUARE = SQUARE/2
-
+SARTINGPOSITION = "a8"
 
 def squares_to_move(start, end):
 
     horizontal_diff = ord(end[0]) - ord(start[0])
 
-    vertical_diff = ord(end[1]) - ord(start[1])
+    vertical_diff = int(end[1:]) - int(start[1:])
+
 
     # R = RIGHT
     # D = DOWN
@@ -32,4 +33,4 @@ def squares_to_move(start, end):
 
 
 # example usage
-print(squares_to_move("c2", "e3"))
+print(squares_to_move("b2", "g22"))
