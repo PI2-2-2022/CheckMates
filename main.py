@@ -7,8 +7,11 @@ interface = Interface()
 
 
 def main():
-    level = interface.get_level()
-    color = interface.get_color()
+    # TODO mandar o codigo 900 pra eletronica no inicio do jogo
+    # level = interface.get_level()
+    # color = interface.get_color()]
+    level = 1
+    color = 'w'
 
     stockfish = Stockfish(
         STOCKFISH_PATH,

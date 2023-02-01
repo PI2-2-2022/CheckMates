@@ -1,7 +1,9 @@
 import serial
 import time
 import serial.tools.list_ports
+from Board import Board
 
+board = Board()
 
 class Communication:
     def __init__(self) -> None:
@@ -18,6 +20,7 @@ class Communication:
                 else:
                     matrix_row.append(char)
             matrix.append(matrix_row)
+        
         return matrix
 
     def matrix_to_bitboard(self, matrix):  # COMMUNICATION
@@ -46,20 +49,38 @@ class Communication:
 
         serializer.write(message.encode())  # messages needs to be sent in binary
 
+        # Read multiple lines of data
+        final = []
+        while True:
+            response = serializer.readline().decode().split()
+            if response: final.append(response)
+            else: break
+
+        # Print the response
+        # print(response.decode())
+
         serializer.close()
+        # final =[
+        #     ['800', '0', '8'],
+        #     ['8|', '0', '0', '0', '0', '0', '0', '0', '0', '|'],
+        #     ['7|', '0', '0', '0', '0', '0', '0', '0', '0', '|'],
+        #     ['6|', '1', '1', '1', '1', '1', '1', '1', '1', '|'],
+        #     ['5|', '1', '1', '1', '1', '1', '1', '1', '1', '|'],
+        #     ['4|', '1', '1', '1', '1', '1', '1', '1', '1', '|'],
+        #     ['3|', '1', '1', '1', '1', '1', '1', '1', '1', '|'],
+        #     ['2|', '0', '0', '0', '0', '0', '0', '0', '0', '|'],
+        #     ['1|', '0', '0', '0', '0', '0', '0', '0', '0', '|']]
+        print(final)
+        return final
 
     def send_message(self, message):
         # TODO mostrar as mensagem no display
         print(message)
 
-    def request_bitBoard(self, bitboard):
-        # TODO comunicação com a eletrônica que retorna a bitBoard Atual
-        temp = input("Movimento da IA ou movimento do usuario (e2e4)")
-        if temp == "skip":
-            return bitboard
-        else:
-            # TODO receber 'e2e4', transformar em bitboard para simular o retorno da eletronica
-            return bitboard
+    def request_bitBoard(self):
+        raw = self.test_serializer_comunication("800")
+        bitBoard = board.transform_raw_board(raw)
+        return bitBoard
 
     def get_give_up(self):
         # TODO caso o usuario desista do jogo

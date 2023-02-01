@@ -31,5 +31,17 @@ class Board:
 
         return f"{origin}{to}"
 
+    def transform_raw_board(self, raw):
+        bitBoard = []
+        for item in raw:
+            row = [1 if x == '0' else 0 for x in item[1:-1]]
+            if len(row) == 8: bitBoard.append(row)
+        return bitBoard
+
     def is_initial_board(self, bitBoard) -> bool:
         return bitBoard == INITIAL_BOARD_BIT
+
+    def print_list_of_lists(self, lst_of_lsts):
+        print('\n\n')
+        for lst in lst_of_lsts:
+            print(lst)
