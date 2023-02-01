@@ -12,6 +12,12 @@ class Validation:
         board = chess.Board(currentFen)
 
         if board.is_checkmate():
+            # print(
+            #                 "Checkmate, Jogador 1 ganhou"
+            #                 if chess.Board(currentFen).turn == "w"
+            #                 else "Checkmate, Jogador 2 ganhou"
+            #             )
+            #             break
             message = "Check Mate!"
         if board.is_stalemate():
             message = "Stale Mate!"
@@ -23,7 +29,7 @@ class Validation:
             or board.is_stalemate()
             or board.is_insufficient_material()
         ):
-            Communication.send_endgame_message(message)
+            Communication.send_message(message)
             return True
         else:
             return False

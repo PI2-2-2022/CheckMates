@@ -3,8 +3,8 @@ from Validation import Validation
 from Communication import Communication
 from Board import Board
 from stockfish import Stockfish
-from constants import STARTING_FEN
-import chess
+from constants import STARTING_FEN, INITIAL_BOARD_BIT
+import time
 
 board = Board()
 validation = Validation()
@@ -13,6 +13,10 @@ communication = Communication()
 
 class Interface:
     # Representa a classe que realiza a a interface com o usuário
+    currentBitBoard = [[]]
+    currentFen = STARTING_FEN
+    isAIMovement = False
+    stockfish = None
 
     def __init__(self):
         pass
@@ -27,37 +31,56 @@ class Interface:
         )
         return color
 
-    def start_game(self, stockfish: Stockfish, currentFen, currentBitBoard, color):
-        if currentFen == None:
-            currentFen = STARTING_FEN
+    def make_AI_movement(self):
+        self.isAIMovement = True
+        self.stockfish.set_fen_position(self.currentFen)
+        bestMove = self.stockfish.get_best_move()
+        self.stockfish.make_moves_from_current_position([bestMove])
+        self.currentFen = self.stockfish.get_fen_position()
+        matrix = communication.fen_to_matrix(self.currentFen)
+        self.currentBitBoard = communication.matrix_to_bitboard(matrix)
+        communication.send_bit_board(self.currentBitBoard)
+        board.update_board(self.currentFen)
+
+    def game_loop(self, color):
         if color == "b":
-            stockfish.set_fen_position(currentFen)
-            bestMove = stockfish.get_best_move()
-            stockfish.make_moves_from_current_position([bestMove])
-            currentFen = stockfish.get_fen_position()
-        while not validation.is_game_over_or_drawn(currentFen):
-            give_up = input(
-                'Insira sua jogada(ex.: e2e4) ou digite "give up" para desistir: '
-            )
-            if give_up == "give up":
-                print("Jogador desistiu, fim de jogo.")
-                break
-            move = give_up
-            if validation.is_valid_move(move, currentFen):
-                stockfish.make_moves_from_current_position([move])
-                bestMove = stockfish.get_best_move()
-                stockfish.make_moves_from_current_position([bestMove])
-                currentFen = stockfish.get_fen_position()
-                if validation.is_checkmate(currentFen):
-                    print(
-                        "Checkmate, Jogador 1 ganhou"
-                        if chess.Board(currentFen).turn == "w"
-                        else "Checkmate, Jogador 2 ganhou"
-                    )
-                    break
-                matrix = communication.fen_to_matrix(currentFen)
-                currentBitBoard = communication.matrix_to_bitboard(matrix)
-                communication.send_bit_board(currentBitBoard)
-                board.update_board(currentFen)
-            else:
-                print("Movimento inválido, tente novamente.")
+            self.make_AI_movement()
+
+        while not validation.is_game_over_or_drawn(self.currentFen):
+            bitBoard = communication.request_bitBoard(self.currentBitBoard)
+
+            if not bitBoard == self.currentBitBoard and self.isAIMovement:
+                time.sleep(1)
+                continue
+            elif bitBoard == self.currentBitBoard and self.isAIMovement:
+                self.isAIMovement = False
+            # Detecta o movimento do usuario pela diferença das bitBoards
+            elif not bitBoard == self.currentBitBoard:
+                # Pega o movimento no formato "e2e4" pela diferença da bitboard
+                move = board.get_move(bitBoard, self.currentBitBoard)
+
+                if validation.is_valid_move(move, self.currentFen):
+                    # Realizando o movimento do usuario na stockfish
+                    self.stockfish.make_moves_from_current_position([move])
+                    # Verifica se o usuário fez um movimento que resulta no fim do jogo
+                    if validation.is_game_over_or_drawn(self.currentFen):
+                        break
+
+                    self.make_AI_movement()
+                else:
+                    print("Movimento inválido, tente novamente.")
+                    continue
+            time.sleep(1)
+
+    def start_game(self, stockfish: Stockfish, color):
+        self.stockfish = stockfish
+        # Pega a bit board inicial do jogo
+        bitBoard = communication.request_bitBoard(INITIAL_BOARD_BIT)
+
+        # Caso o tabuleiro incial não seja válido, manda uma mensagem para o display
+        if not board.is_initial_board(bitBoard):
+            communication.send_message("Tabuleiro inicial inválido")
+        else:
+            self.currentBitBoard = bitBoard
+            board.update_board(self.currentFen)
+            self.game_loop(color)
