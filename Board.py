@@ -45,3 +45,7 @@ class Board:
         print('\n\n')
         for lst in lst_of_lsts:
             print(lst)
+
+    def is_zona_morta(self, move):
+        # TODO verificar se o destino do movimento (e2z1 -> segunda parte do movimento) está na zona morta
+        return False

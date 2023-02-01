@@ -68,6 +68,10 @@ class Interface:
                 # Pega o movimento no formato "e2e4" pela diferença da bitboard
                 move = board.get_move(bitBoard, self.currentBitBoard)
                 print(move)
+                # Verifica se o movimento foi um pré-movimento para comer uma peça (movimentar uma peça pra zona morta)
+                if board.is_zona_morta(move):
+                    self.currentBitBoard = bitBoard
+                    continue
 
                 if validation.is_valid_move(move, self.currentFen):
                     # Realizando o movimento do usuario na stockfish
