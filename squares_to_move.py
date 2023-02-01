@@ -2,6 +2,7 @@ SQUARE = 5
 HALF_SQUARE = SQUARE / 2
 MINIMUM_WALK= 0.5
 SARTING_POSITION = "a8"
+from Communication import Communication
 
 
 def get_coordinates(position):
@@ -12,7 +13,7 @@ def get_coordinates(position):
 
 
 def squares_to_move(start, end):
-
+    communication = Communication()
     current_coordinates = get_coordinates(start)
     print("inicial", current_coordinates)
     end_coordinates = get_coordinates(end)
@@ -104,6 +105,7 @@ def squares_to_move(start, end):
     print(last_half_move, " ", last_half_move_string)
     # return final_array
     # print(final_array)
+    communication.test_serializer_comunication("502")
     return [
         first_half_move_string, horizontal_move_string, vertical_move_string,
         last_half_move_string
