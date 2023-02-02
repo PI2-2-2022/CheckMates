@@ -4,6 +4,7 @@ MINIMUM_WALK= 0.5
 SARTING_POSITION = "a8"
 from Communication import Communication
 
+communication = Communication()
 
 def get_coordinates(position):
     horizontal_diff = ord(SARTING_POSITION[0]) - ord(position[0])
@@ -13,7 +14,6 @@ def get_coordinates(position):
 
 
 def squares_to_move(start, end):
-    communication = Communication()
     current_coordinates = get_coordinates(start)
     print("inicial", current_coordinates)
     end_coordinates = get_coordinates(end)
@@ -105,7 +105,7 @@ def squares_to_move(start, end):
     print(last_half_move, " ", last_half_move_string)
     # return final_array
     # print(final_array)
-    communication.test_serializer_comunication("502")
+    communication.simple_comm("250")
     return [
         first_half_move_string, horizontal_move_string, vertical_move_string,
         last_half_move_string
@@ -113,5 +113,16 @@ def squares_to_move(start, end):
 
 
 # example usage
-print(squares_to_move("a7", "d4"))
-# print(get_coordinates("c6"))
+# print(squares_to_move("a7", "d4"))
+
+def move_piece(start, end):
+    resp = communication.simple_comm("900",2)
+    resp = communication.simple_comm("600",2)
+    resp = communication.simple_comm("530",3)
+    resp = communication.simple_comm("600",2)
+    # resp = communication.simple_comm("330",200)
+    
+    print(resp)
+
+# print(get_coordinates("c6"))]
+move_piece(200,200)

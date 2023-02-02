@@ -4,6 +4,7 @@ import serial.tools.list_ports
 from Board import Board
 
 board = Board()
+serializer=serial.Serial("/dev/ttyUSB0", 9600)
 
 class Communication:
     def __init__(self) -> None:
@@ -43,7 +44,6 @@ class Communication:
             pathCOMPort = str(p).split("-")[0].strip()
             print(pathCOMPort)
 
-        serializer = serial.Serial(pathCOMPort, 9600)
 
         time.sleep(2)  # wait for communication to get established
 
@@ -59,7 +59,6 @@ class Communication:
         # Print the response
         # print(response.decode())
 
-        serializer.close()
         # final =[
         #     ['800', '0', '8'],
         #     ['8|', '0', '0', '0', '0', '0', '0', '0', '0', '|'],
@@ -72,6 +71,30 @@ class Communication:
         #     ['1|', '0', '0', '0', '0', '0', '0', '0', '0', '|']]
         print(final)
         return final
+
+    
+    def simple_comm(self, message,size):
+        # extract COM port automatically
+        
+
+        time.sleep(2)  # wait for communication to get established
+
+        serializer.write(message.encode())  # messages needs to be sent in binary
+
+        # Read multiple lines of data
+        final = []
+        while True:
+            response = serializer.readline().decode().split()
+            print(response)
+            if len(response)==int(size): 
+                final.append(response) 
+                break
+            # else: break
+            
+        # serializer.close()
+
+        return final
+
 
     def send_message(self, message):
         # TODO mostrar as mensagem no display
