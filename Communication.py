@@ -4,7 +4,7 @@ import serial.tools.list_ports
 from Board import Board
 
 board = Board()
-serializer=serial.Serial("/dev/ttyUSB0", 9600)
+serializer=serial.Serial("/dev/ttyACM0", 9600)
 
 class Communication:
     def __init__(self) -> None:
