@@ -2,10 +2,10 @@ SQUARE = 5
 HALF_SQUARE = SQUARE / 2
 MINIMUM_WALK= 0.5
 SARTING_POSITION = "a8"
-from Communication import Communication
-x_atual = 0
-y_atual = 0
-communication = Communication()
+# from Communication import Communication
+# x_atual = 0
+# y_atual = 0
+# communication = Communication()
 
 def get_coordinates(position):
     horizontal_diff = ord(SARTING_POSITION[0]) - ord(position[0])
@@ -133,16 +133,7 @@ def calibra():
     x_atual = 0
     y_atual = 0
     return 
-
-def move_piece(start, end):
-    
-    
-    # resp = communication.simple_comm("900",2)
-    # resp = communication.simple_comm("530",3)
-    # resp = communication.simple_comm("600",2)
-    # resp = communication.simple_comm("330",200)
-    squares_to_move("a8","d5")
-    
+   
 def set_cnc_on_piece(place_to_go):
     local_now = communication.simple_comm("600",2)
     print("local atual = ", local_now)
@@ -176,16 +167,16 @@ def set_cnc_on_piece(place_to_go):
     
     
 
-def teste():
-    calibra()
-    set_cnc_on_piece('c8')
-    communication.simple_comm("400",2)
-    squares = squares_to_move("c8","h8")
-    for square in squares:
-        resp = communication.simple_comm(square,3)
-    communication.simple_comm("400",2)    
-    return  
-# print(get_coordinates("c6"))]
-# print(get_coordinates("b7"))
-teste()
-
+# def teste():
+#     calibra()
+#     set_cnc_on_piece('c8')
+#     communication.simple_comm("400",2)
+#     squares = squares_to_move("c8","h8")
+#     for square in squares:
+#         resp = communication.simple_comm(square,3)
+#     communication.simple_comm("400",2)    
+#     return  
+# # print(get_coordinates("c6"))]
+# # print(get_coordinates("b7"))
+# teste()
+squares_to_move("c8","h8")
