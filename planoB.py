@@ -4,11 +4,14 @@ from constants import STARTING_FEN
 from Validation import Validation
 # from Communication import Communication
 from Board import Board
+from Moviments import Moviments
+
 import chess
 
 # communication = Communication()
 validation = Validation()
 board = Board()
+moviments = Moviments()
 
 class PlanB:
 
@@ -39,6 +42,8 @@ class PlanB:
                 bestMove = stockfish.get_best_move()
                 ## Mover peça baseada no movimento do adversário (bestMove)
                 stockfish.make_moves_from_current_position([bestMove]) #atualiza fen stockfish
+                moviments.squares_to_move( bestMove[:2],bestMove [2:])
+                # print( bestMove[:2],bestMove [2:])
                 currentFen = stockfish.get_fen_position() #atualiza nossa fen interna
                 if validation.is_checkmate(currentFen):
                     print("Checkmate, Jogador 1 ganhou" if chess.Board(currentFen).turn == 'w' else "Checkmate, Jogador 2 ganhou")

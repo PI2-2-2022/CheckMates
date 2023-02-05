@@ -1,15 +1,6 @@
 # from Communication import Communication
 # communication = Communication()
-class Moviments:
-    def __init__(self) -> None:
-        pass
-
-    def calibra(self):
-        communication.simple_comm("900", 2)
-        print("calibrado")
-        return
-
-    chessboard = {
+chessboard = {
         "a8": [5, 0],
         "b8": [15, 0],
         "c8": [25, 0],
@@ -75,8 +66,50 @@ class Moviments:
         "g1": [65, 70],
         "h1": [75, 70],
     }
+class Moviments:
+    def __init__(self) -> None:
+        pass
+
+    def calibra(self):
+        communication.simple_comm("900", 2)
+        print("calibrado")
+        return
+
+    def set_cnc_on_piece(self, place_to_go):
+        local_now = communication.simple_comm("600", 2)
+        print("local atual = ", local_now)
+        to_go = chessboard[place_to_go]
+        x_to_go = to_go[0]
+        Y_to_go = to_go[1]
+        print("quero ir: ", to_go)
+        print("quero ir passos: ", x_to_go, Y_to_go)
+        x_to_move = x_to_go - int(local_now[0][0])
+        y_to_move = Y_to_go - int(local_now[0][1])
+        print("temos que andar: x", x_to_move, " y", y_to_move)
+        x_final = ""
+        y_final = ""
+        if x_to_move > 0:
+            x_final = "3" + str(int(abs(x_to_move))).rjust(2, "0")
+        else:
+            x_final = "1" + str(int(abs(x_to_move))).rjust(2, "0")
+
+        if y_to_move > 0:
+            y_final = "5" + str(
+                int(abs(y_to_move) if abs(y_to_move) <= 70 else 70)
+            ).rjust(2, "0")
+        else:
+            y_final = "2" + str(
+                int(abs(y_to_move) if abs(y_to_move) <= 70 else 70)
+            ).rjust(2, "0")
+
+        print(to_go)
+        print("tem que andar", x_final, y_final)
+        communication.simple_comm(x_final, 3)
+        communication.simple_comm(y_final, 3)
+
 
     def squares_to_move(self, start, end):
+        # set_cnc_on_piece(start)
         current_coordinates = chessboard[start]
         print("inicial", current_coordinates)
         end_coordinates = chessboard[end]
@@ -166,38 +199,7 @@ class Moviments:
             last_half_move_string,
         ]
 
-    def set_cnc_on_piece(self, place_to_go):
-        local_now = communication.simple_comm("600", 2)
-        print("local atual = ", local_now)
-        to_go = chessboard[place_to_go]
-        x_to_go = to_go[0]
-        Y_to_go = to_go[1]
-        print("quero ir: ", to_go)
-        print("quero ir passos: ", x_to_go, Y_to_go)
-        x_to_move = x_to_go - int(local_now[0][0])
-        y_to_move = Y_to_go - int(local_now[0][1])
-        print("temos que andar: x", x_to_move, " y", y_to_move)
-        x_final = ""
-        y_final = ""
-        if x_to_move > 0:
-            x_final = "3" + str(int(abs(x_to_move))).rjust(2, "0")
-        else:
-            x_final = "1" + str(int(abs(x_to_move))).rjust(2, "0")
-
-        if y_to_move > 0:
-            y_final = "5" + str(
-                int(abs(y_to_move) if abs(y_to_move) <= 70 else 70)
-            ).rjust(2, "0")
-        else:
-            y_final = "2" + str(
-                int(abs(y_to_move) if abs(y_to_move) <= 70 else 70)
-            ).rjust(2, "0")
-
-        print(to_go)
-        print("tem que andar", x_final, y_final)
-        communication.simple_comm(x_final, 3)
-        communication.simple_comm(y_final, 3)
-
+    
     def teste(self):
         calibra()
         set_cnc_on_piece("c8")
@@ -208,4 +210,3 @@ class Moviments:
         communication.simple_comm("400", 2)
         return
 
-    print(squares_to_move("c8", "h8"))
