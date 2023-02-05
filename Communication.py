@@ -74,11 +74,6 @@ class Communication:
 
     
     def simple_comm(self, message,size):
-        # extract COM port automatically
-        
-
-        time.sleep(2)  # wait for communication to get established
-
         serializer.write(message.encode())  # messages needs to be sent in binary
 
         # Read multiple lines of data
@@ -89,10 +84,6 @@ class Communication:
             if len(response)==int(size): 
                 final.append(response) 
                 break
-            # else: break
-            
-        # serializer.close()
-
         return final
 
 
