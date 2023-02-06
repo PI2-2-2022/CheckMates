@@ -19,6 +19,7 @@ class PlanB:
         pass
 
     def start_game(self, stockfish: Stockfish, currentFen, color):
+        moviments.calibra()
         if currentFen == None:
             currentFen = STARTING_FEN
         if color == 'b':
@@ -42,7 +43,9 @@ class PlanB:
                 bestMove = stockfish.get_best_move()
                 ## Mover peça baseada no movimento do adversário (bestMove)
                 stockfish.make_moves_from_current_position([bestMove]) #atualiza fen stockfish
-                moviments.squares_to_move( bestMove[:2],bestMove [2:])
+                # moviments.squares_to_move( bestMove[:2],bestMove [2:])
+                print("Stockfish: ", bestMove[:2],bestMove [2:],"\n")
+                moviments.game_moviment(bestMove[:2],bestMove [2:])
                 # print( bestMove[:2],bestMove [2:])
                 currentFen = stockfish.get_fen_position() #atualiza nossa fen interna
                 if validation.is_checkmate(currentFen):

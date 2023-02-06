@@ -1,5 +1,6 @@
-# from Communication import Communication
-# communication = Communication()
+from Communication import Communication
+communication = Communication()
+
 chessboard = {
         "a8": [5, 0],
         "b8": [15, 0],
@@ -71,8 +72,8 @@ class Moviments:
         pass
 
     def calibra(self):
-        communication.simple_comm("900", 2)
         print("calibrado")
+        communication.simple_comm("900", 2)
         return
 
     def set_cnc_on_piece(self, place_to_go):
@@ -110,6 +111,7 @@ class Moviments:
 
     def squares_to_move(self, start, end):
         # set_cnc_on_piece(start)
+        print(start,end)
         current_coordinates = chessboard[start]
         print("inicial", current_coordinates)
         end_coordinates = chessboard[end]
@@ -200,11 +202,12 @@ class Moviments:
         ]
 
     
-    def teste(self):
-        calibra()
-        set_cnc_on_piece("c8")
+    def game_moviment(self,start, end):
+        print("chegou", start,end)
+        self.set_cnc_on_piece(start)
         communication.simple_comm("400", 2)
-        squares = squares_to_move("c8", "h8")
+        print("vai ser", start,end)
+        squares = self.squares_to_move(start, end)
         for square in squares:
             resp = communication.simple_comm(square, 3)
         communication.simple_comm("400", 2)

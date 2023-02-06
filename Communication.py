@@ -74,6 +74,7 @@ class Communication:
 
     
     def simple_comm(self, message,size):
+        time.sleep(2)
         serializer.write(message.encode())  # messages needs to be sent in binary
 
         # Read multiple lines of data
