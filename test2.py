@@ -1,5 +1,9 @@
+import time
 from Communication import Communication
 
 comunication = Communication()
 
-comunication.serializer_comunication("3")
+while True:
+
+    comunication.serializer_comunication("800")
+    time.sleep(0.5)

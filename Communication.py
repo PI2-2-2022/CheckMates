@@ -6,8 +6,7 @@ from Board import Board
 
 board = Board()
 
-# TODO descomentar quando for testar com a eletronica
-# serializer = serial.Serial("/dev/ttyUSB0", 9600)
+serializer = serial.Serial("/dev/ttyACM0", 9600)
 
 
 class Communication:
@@ -45,18 +44,19 @@ class Communication:
 
         time.sleep(2)  # wait for communication to get established
 
-        serializer.write(message.encode())  # messages needs to be sent in binary
-
+        serializer.write(message.encode())
+         # messages needs to be sent in binary
         # Read multiple lines of data
         final = []
+        count= 0 
         while True:
             response = serializer.readline().decode().split()
-            if response:
+            print(response)
+            if len(response) > 5:
                 final.append(response)
-            else:
-                break
-
-        return final
+                count+=1
+            if count==8:
+                return final
 
     def simple_comm(self, message, size):
         # extract COM port automatically
@@ -86,10 +86,11 @@ class Communication:
     def request_bitBoard(self):
         # TODO descomentar quando for testar com a eletronica
         # Le a bitboard da eletronica
-        # raw = self.serializer_comunication("800")
+        raw = self.serializer_comunication("800")
+
         # TODO comentar quando for testar com a eletronica
         # Simula uma leitura de bitboard de um txt
-        raw = self.get_bit_board_txt()
+        # raw = self.get_bit_board_txt()
 
         bitBoard = board.transform_raw_board(raw)
         return bitBoard

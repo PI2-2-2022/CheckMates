@@ -1,14 +1,15 @@
-import os
 from Validation import Validation
 from Communication import Communication
 from Board import Board
 from stockfish import Stockfish
-from constants import STARTING_FEN, INITIAL_BIT_BOARD, INITIAL_BOARD
-import time
+from constants import STARTING_FEN, INITIAL_BIT_BOARD, INITIAL_BOARD, ZONA_MORTA_BLACK, ZONA_MORTA_WHITE
+from Movements import Movements
 
 board = Board()
 validation = Validation()
 communication = Communication()
+movements = Movements()
+
 
 
 class Interface:
@@ -18,6 +19,7 @@ class Interface:
     currentFen = STARTING_FEN
     isAIMovement = False
     stockfish = None
+    AIEatenPieces = 0
 
     def __init__(self):
         pass
@@ -32,11 +34,31 @@ class Interface:
         )
         return color
 
+    # def move_to_zona_morta(self):
+        # Pega qual a cor das peças da IA
+        # turn = self.currentFen[-12]
+        # zonaMortaCoords = ZONA_MORTA_BLACK if turn == "b" else ZONA_MORTA_WHITE
+
+        # coords = board.move_to_coords(bestMove)
+        # originX = coords[1][0]
+        # originY = coords[1][1]
+        # AIEatenPieces é a "N"ésima vez que a IA está comendo uma peça
+        # destinationX = zonaMortaCoords[self.AIEatenPieces][0]
+        # destinationY = zonaMortaCoords[self.AIEatenPieces][1]
+        # self.AIEatenPieces = self.AIEatenPieces + 1
+        # TODO implementar o movimento do motor por coordenadas
+        # movement.coords_movement([originX, originY], [destinationX, destinationY])
+
     def make_AI_movement(self):
         self.isAIMovement = True
         self.stockfish.set_fen_position(self.currentFen)
         bestMove = self.stockfish.get_best_move()
         print("Movimento IA: ", bestMove)
+
+        # if board.destination_has_piece(bestMove):
+        #   self.move_to_zona_morta()
+
+        movements.game_movement(bestMove[:2],bestMove [2:])
         self.stockfish.make_moves_from_current_position([bestMove])
         self.currentFen = self.stockfish.get_fen_position()
         matrix = communication.fen_to_matrix(self.currentFen)

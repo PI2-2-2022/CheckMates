@@ -91,3 +91,11 @@ class Board:
         # Caso contrário siginifica que ele está no meio de um movimento das suas peças.
         pieces = BLACK_PIECES if turn == "w" else WHITE_PIECES
         return piece in pieces
+
+    def destination_has_piece(self, move, currentBoard):
+        coords = self.move_to_coords(move)
+        x = coords[1][0]
+        y = coords[1][1]
+
+        piece = currentBoard[x][y]
+        return not piece == ' ' 

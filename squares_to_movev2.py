@@ -83,7 +83,7 @@ def squares_to_move(start, end):
 
     vertical_diff = end_coordinates[1] - current_coordinates[1]
 
-    Moviments_dict = {"R": "3", "D": "5", "L": "1", "U": "2"}
+    Movements_dict = {"R": "3", "D": "5", "L": "1", "U": "2"}
     
     # R = RIGHT
     # D = DOWN
@@ -92,16 +92,16 @@ def squares_to_move(start, end):
 
     if(horizontal_diff == 0):
         first_half_move = "5 L"
-        first_half_move_string= Moviments_dict["L"]+ "05"
+        first_half_move_string= Movements_dict["L"]+ "05"
         current_coordinates[0]-=5
     else:
         if(start[1]=='1'):
             first_half_move = "5 U"
-            first_half_move_string= Moviments_dict["U"]+ "05"
+            first_half_move_string= Movements_dict["U"]+ "05"
             current_coordinates[1]-=5
         else:
             first_half_move = "5 D"
-            first_half_move_string= Moviments_dict["D"]+ "05"
+            first_half_move_string= Movements_dict["D"]+ "05"
             current_coordinates[1]+=5
     print(first_half_move)
     print(current_coordinates)
@@ -114,11 +114,11 @@ def squares_to_move(start, end):
     
     if (horizontal_diff < 0):
          horizontal_move = str(abs(horizontal_diff))+" L"
-         horizontal_move_string = Moviments_dict["L"]+ str(abs(horizontal_diff)).rjust(2, '0')
+         horizontal_move_string = Movements_dict["L"]+ str(abs(horizontal_diff)).rjust(2, '0')
          current_coordinates[0]-=abs(horizontal_diff)
     else:
         horizontal_move = str(abs(horizontal_diff))+" R"
-        horizontal_move_string = Moviments_dict["R"]+ str(abs(horizontal_diff)).rjust(2, '0')
+        horizontal_move_string = Movements_dict["R"]+ str(abs(horizontal_diff)).rjust(2, '0')
         current_coordinates[0]+=abs(horizontal_diff)
    
     print(horizontal_move)
@@ -126,11 +126,11 @@ def squares_to_move(start, end):
 
     if (vertical_diff < 0):
          vertical_move = str(abs(vertical_diff))+" U"
-         vertical_move_string = Moviments_dict["U"]+ str(abs(vertical_diff)).rjust(2, '0')
+         vertical_move_string = Movements_dict["U"]+ str(abs(vertical_diff)).rjust(2, '0')
          current_coordinates[1]-=abs(vertical_diff)
     else:
         vertical_move = str(abs(vertical_diff))+" D"
-        vertical_move_string = Moviments_dict["D"]+ str(abs(vertical_diff)).rjust(2, '0')
+        vertical_move_string = Movements_dict["D"]+ str(abs(vertical_diff)).rjust(2, '0')
         current_coordinates[1]+=abs(vertical_diff)
         
     print(vertical_move)
@@ -138,11 +138,11 @@ def squares_to_move(start, end):
     
     if(end_coordinates[0] > current_coordinates[0]):
         last_half_move= '5 R'
-        last_half_move_string= Moviments_dict["R"]+ "05"
+        last_half_move_string= Movements_dict["R"]+ "05"
         current_coordinates[0]+=5
     else:
         last_half_move= '5 L'
-        last_half_move_string= Moviments_dict["L"]+ "05"
+        last_half_move_string= Movements_dict["L"]+ "05"
         current_coordinates[0]-=5
          
     print(last_half_move)

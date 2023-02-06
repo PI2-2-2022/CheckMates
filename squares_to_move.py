@@ -32,7 +32,7 @@ def squares_to_move(start, end):
     vertical_diff = int(end[1:]) - int(start[1:])
     final_array = []
 
-    Moviments_dict = {"R": "3", "D": "5", "L": "1", "U": "2"}
+    Movements_dict = {"R": "3", "D": "5", "L": "1", "U": "2"}
     
     # R = RIGHT
     # D = DOWN
@@ -41,8 +41,8 @@ def squares_to_move(start, end):
 
     first_half_move = str(HALF_SQUARE) + (" L"
                                           if horizontal_diff == 0 else " D")
-    first_half_move_string = (Moviments_dict["L"] if horizontal_diff == 0 else
-                              Moviments_dict["D"]) + str(
+    first_half_move_string = (Movements_dict["L"] if horizontal_diff == 0 else
+                              Movements_dict["D"]) + str(
                                   int(HALF_SQUARE / MINIMUM_WALK)).rjust(
                                       2, '0')
 
@@ -67,16 +67,16 @@ def squares_to_move(start, end):
     horizontal_move = str(abs(horizontal_cm)) + \
         (" L" if horizontal_diff < 0 else " R")
 
-    horizontal_move_string = (Moviments_dict["L"] if horizontal_diff < 0 else
-                              Moviments_dict["R"]) + str(
+    horizontal_move_string = (Movements_dict["L"] if horizontal_diff < 0 else
+                              Movements_dict["R"]) + str(
                                   int(abs(horizontal_cm / MINIMUM_WALK))).rjust(
                                       2, '0')
 
     vertical_move = str(
         abs(vertical_cm)) + (" D" if vertical_diff < 0 else " U")
 
-    vertical_move_string = (Moviments_dict["D"] if vertical_diff < 0 else
-                            Moviments_dict["U"]) + str(
+    vertical_move_string = (Movements_dict["D"] if vertical_diff < 0 else
+                            Movements_dict["U"]) + str(
                                 int(abs(vertical_cm / MINIMUM_WALK))).rjust(
                                     2, '0')
 
@@ -106,9 +106,9 @@ def squares_to_move(start, end):
 
     last_half_move = str(HALF_SQUARE) + (
         " R" if end_coordinates[1] > current_coordinates[1] else " L")
-    last_half_move_string = (Moviments_dict["R"]
+    last_half_move_string = (Movements_dict["R"]
                              if end_coordinates[1] > current_coordinates[1]
-                             else Moviments_dict["L"]) + str(
+                             else Movements_dict["L"]) + str(
                                  int(HALF_SQUARE / MINIMUM_WALK)).rjust(2, '0')
 
     final_array.append(current_coordinates)
