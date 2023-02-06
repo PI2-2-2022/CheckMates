@@ -2,16 +2,14 @@ from stockfish import Stockfish
 from Interface import Interface
 from constants import STOCKFISH_PATH
 
-
 interface = Interface()
 
 
 def main():
     # TODO mandar o codigo 900 pra eletronica no inicio do jogo
-    # level = interface.get_level()
-    # color = interface.get_color()]
-    level = 1
-    color = 'w'
+    # Descomentar quando a interface de nivel e cor estiver pronta
+    level = 1  # interface.get_level()
+    color = "w"  # interface.get_color()]
 
     stockfish = Stockfish(
         STOCKFISH_PATH,

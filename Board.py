@@ -27,6 +27,17 @@ class Board:
 
         return f"{origin}{to}"
 
+    def move_to_coords(self, move):
+        col_map = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
+        row_map = {str(i): 8 - i for i in range(1, 9)}
+
+        start_col = col_map.get(move[0], -1)
+        start_row = row_map.get(move[1], -1)
+        end_col = col_map.get(move[2], -1)
+        end_row = row_map.get(move[3], -1)
+
+        return [[start_row, start_col], [end_row, end_col]]
+
     def transform_raw_board(self, raw):
         bitBoard = []
         for item in raw:
@@ -39,13 +50,13 @@ class Board:
         return bitBoard == INITIAL_BIT_BOARD
 
     def update_board(self, currentBoard, move):
-        # TODO verificar o funcionamento
+        coords = self.move_to_coords(move)
         # Pega as coordenadas da origem do movimento
-        originX = ord(move[0]) - 97
-        originY = int(move[1])
+        originX = coords[0][0]
+        originY = coords[0][1]
         # Pega as coordenadas do destino do movimento
-        destinationX = ord(move[2]) - 97
-        destinationY = int(move[3])
+        destinationX = coords[1][0]
+        destinationY = coords[1][1]
 
         # Substitui a peça do destino pela da origem e coloca vazio na origem.
         piece = currentBoard[originX][originY]
@@ -60,19 +71,20 @@ class Board:
             print(lst)
 
     def is_move_to_eat_piece(self, move, currentBoard, currentFen):
-        # TODO será necessário testar e fazer ajustes nessa função
+        # TODO comer uma peça errada é um problema!
         # Verifica se a peça não tem destino, caso tenha é um movimento normal e retorna falso
         if not "None" in move:
             return False
 
         # Pega qual a cor das peças do usuário
-        turn = currentFen[20]
+        turn = currentFen[-12]
 
         # Pega as coordenadas da origem do movimento
-        x = ord(move[0]) - 97
-        y = int(move[1])
+        coords = self.move_to_coords(move)
+        x = coords[0][0]
+        y = coords[0][1]
 
-        # Pega qual peça foi movimentada a partir daquela origigem
+        # Pega qual peça foi movimentada a partir daquela origem
         piece = currentBoard[x][y]
         # Verifica qual grupo de peças serão comparadas dependendo da cor do usuário.
         # Caso sejam peças que não são dele, significa que ele está colocando uma peça na zona morta.
