@@ -6,7 +6,7 @@ from Board import Board
 
 board = Board()
 
-serializer = serial.Serial("/dev/ttyACM0", 9600)
+serializer = serial.Serial("/dev/ttyUSB0", 9600)
 
 
 class Communication:
@@ -61,7 +61,7 @@ class Communication:
     def simple_comm(self, message, size):
         # extract COM port automatically
 
-        time.sleep(2)  # wait for communication to get established
+        time.sleep(1.5)  # wait for communication to get established
 
         serializer.write(message.encode())  # messages needs to be sent in binary
 

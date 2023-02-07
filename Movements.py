@@ -66,8 +66,10 @@ chessboard = {
         "f1": [55, 70],
         "g1": [65, 70],
         "h1": [75, 70],
+        "h1": [75, 70],
+
     }
-offset = 13
+offset = 30
 chessboard_with_offset = {
         "a8": [5+offset, 0],
         "b8": [15+offset, 0],
@@ -133,7 +135,42 @@ chessboard_with_offset = {
         "f1": [55+offset, 70],
         "g1": [65+offset, 70],
         "h1": [75+offset, 70],
+        "m01": [5, 0],
+        "m02": [5, 10],
+        "m03": [5, 20],
+        "m04": [5, 30],
+        "m05": [5, 40],
+        "m06": [5, 50],
+        "m07": [5, 60],
+        "m08": [5, 70],
+        "m09": [15, 0],
+        "m10": [15, 10],
+        "m11": [15, 20],
+        "m12": [15, 30],
+        "m13": [15, 40],
+        "m14": [15, 50],
+        "m15": [15, 60],
+        "m16": [15, 70],
+        "m17": [123, 0],
+        "m18": [123, 10],
+        "m19": [123, 20],
+        "m20": [123, 30],
+        "m21": [123, 40],
+        "m22": [123, 50],
+        "m23": [123, 60],
+        "m24": [123, 70],
+        "m25": [133, 0],
+        "m26": [133, 10],
+        "m27": [133, 20],
+        "m28": [133, 30],
+        "m29": [133, 40],
+        "m30": [133, 50],
+        "m31": [133, 60],
+        "m32": [133, 70],
+        
     }
+
+chessboard = chessboard_with_offset
 class Movements:
     def __init__(self) -> None:
         pass
@@ -172,8 +209,10 @@ class Movements:
 
         print(to_go)
         print("tem que andar", x_final, y_final)
-        communication.simple_comm(x_final, 3)
-        communication.simple_comm(y_final, 3)
+        if(x_final != "100" and x_final != "300"):
+            communication.simple_comm(x_final, 3)
+        if(y_final != "200" and y_final != "500"):
+            communication.simple_comm(y_final, 3)
 
 
     def squares_to_move(self, start, end):
@@ -276,7 +315,8 @@ class Movements:
         print("vai ser", start,end)
         squares = self.squares_to_move(start, end)
         for square in squares:
-            resp = communication.simple_comm(square, 3)
+            if(square != "100" and square != "200" and square != "300" and square != "500"):
+                resp = communication.simple_comm(square, 3)
         communication.simple_comm("400", 2)
         return
 
