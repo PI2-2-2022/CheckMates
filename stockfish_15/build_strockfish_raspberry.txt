@@ -1,0 +1,12 @@
+# Compilar o motor stockfish para raspberry py
+
+# Raspberry
+wget https://github.com/official-stockfish/Stockfish/archive/sf_15.zip
+unzip sf_15.zip
+cd Stockfish-sf_15/src
+make build ARCH=armv7
+
+# Mac OS (testar)
+make build ARCH=x86-64-bmi2 comp=clang
+make build ARCH=apple-silicon
+make build ARCH=generic-64
