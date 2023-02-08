@@ -8,15 +8,10 @@ movements = Movements()
 
 
 def main():
-    # TODO mandar o codigo 900 pra eletronica no inicio do jogo
-    # Descomentar quando a interface de nivel e cor estiver pronta
     movements.calibra()
-    level = 1  # interface.get_level()
-    color = "w"  # interface.get_color()]
-
     stockfish = Stockfish(
         STOCKFISH_PATH,
-        depth=20,
+        depth=5,
         parameters={
             "Debug Log File": "",
             "Contempt": 0,
@@ -27,7 +22,7 @@ def main():
             # Default size is 16 MB. It's recommended that you increase this value, but keep it as some power of 2. E.g., if you're fine using 2 GB of RAM, set Hash to 2048 (11th power of 2).
             "Hash": 512,
             "MultiPV": 1,
-            "Skill Level": level,
+            "Skill Level": 5,
             "Move Overhead": 10,
             "Minimum Thinking Time": 20,
             "Slow Mover": 100,
@@ -36,7 +31,7 @@ def main():
             "UCI_Elo": 1350,
         },
     )
-    interface.start_game(stockfish, color)
+    interface.start_game(stockfish)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ from Validation import Validation
 from Communication import Communication
 from Board import Board
 from stockfish import Stockfish
-from constants import STARTING_FEN, INITIAL_BIT_BOARD, INITIAL_BOARD, ZONA_MORTA_BLACK, ZONA_MORTA_WHITE
+from constants import STARTING_FEN, INITIAL_BIT_BOARD, INITIAL_BOARD
 from Movements import Movements
 
 board = Board()
@@ -24,30 +24,14 @@ class Interface:
     def __init__(self):
         pass
 
-    def get_level(self):  # GUI
-        level = input("Selecione em qual dificuldade você deseja jogar (0-20): ")
-        return int(level)
+    def move_to_zona_morta(self, AIMove):
+        #Pega qual a cor das peças da IA
+        turn = self.currentFen[-12]
+        offset =  (17 if turn == "b" else 0) + self.AIEatenPieces 
+        zonaMortaMove = AIMove[2] + AIMove[3] + 'm' + str(int(abs(offset))).rjust(2, "0")
 
-    def get_color(self):
-        color = input(
-            "Selecione com qual cor deseja jogar (w para jogar com as brancas ou b para jogar com as pretas): "
-        )
-        return color
-
-    # def move_to_zona_morta(self):
-        # Pega qual a cor das peças da IA
-        # turn = self.currentFen[-12]
-        # zonaMortaCoords = ZONA_MORTA_BLACK if turn == "b" else ZONA_MORTA_WHITE
-
-        # coords = board.move_to_coords(bestMove)
-        # originX = coords[1][0]
-        # originY = coords[1][1]
-        # AIEatenPieces é a "N"ésima vez que a IA está comendo uma peça
-        # destinationX = zonaMortaCoords[self.AIEatenPieces][0]
-        # destinationY = zonaMortaCoords[self.AIEatenPieces][1]
-        # self.AIEatenPieces = self.AIEatenPieces + 1
-        # TODO implementar o movimento do motor por coordenadas
-        # movement.coords_movement([originX, originY], [destinationX, destinationY])
+        print('zona morta move: ', zonaMortaMove)
+        movements.game_movement(zonaMortaMove[:2],zonaMortaMove [2:])
 
     def make_AI_movement(self):
         self.isAIMovement = True
@@ -55,8 +39,8 @@ class Interface:
         bestMove = self.stockfish.get_best_move()
         print("Movimento IA: ", bestMove)
 
-        # if board.destination_has_piece(bestMove):
-        #   self.move_to_zona_morta()
+        if board.destination_has_piece(bestMove, self.currentBoard):
+          self.move_to_zona_morta(bestMove)
 
         movements.game_movement(bestMove[:2],bestMove [2:])
         self.stockfish.make_moves_from_current_position([bestMove])
@@ -67,7 +51,7 @@ class Interface:
         board.update_SVG(self.currentFen)
 
     def game_loop(self):
-        while not validation.is_game_over_or_drawn(self.currentFen):
+        while not validation.validate_game_status(self.currentFen):
             bitBoard = communication.request_bitBoard()
 
             # Caso os tabuleiros sejam diferentes e a flag da IA seja true, significa que o motor está movimentando a peça
@@ -85,7 +69,6 @@ class Interface:
 
                 # Verifica se o movimento foi um "pré-movimento" para comer uma peça (movimentar uma peça que não é do usuário para fora do tabuleiro)
                 if board.is_move_to_eat_piece(move, self.currentBoard, self.currentFen):
-                    # TODO verificar se essa atribuição gera problemas
                     self.currentBitBoard = bitBoard
                     continue
 
@@ -95,18 +78,18 @@ class Interface:
                     self.currentFen = self.stockfish.get_fen_position()
                     self.currentBitBoard = bitBoard
                     self.currentBoard = board.update_board(self.currentBoard, move)
+                    board.update_SVG(self.currentFen)
 
                     # Verifica se o usuário fez um movimento que resulta no fim do jogo
-                    if validation.is_game_over_or_drawn(self.currentFen):
+                    if validation.validate_game_status(self.currentFen):
                         break
                     else:
                         self.make_AI_movement()
                 else:
-                    # TODO mostrar vermelho na telinha
-                    print("Movimento inválido, tente novamente.")
+                    print("Usuário se movimentando ou movimento inválido.")
                     continue
 
-    def start_game(self, stockfish: Stockfish, color):
+    def start_game(self, stockfish: Stockfish):
         # Pega a bit board inicial do jogo
         bitBoard = communication.request_bitBoard()
         self.stockfish = stockfish
@@ -117,5 +100,3 @@ class Interface:
         else:
             board.update_SVG(self.currentFen)
             self.game_loop()
-            if color == "b":
-                self.make_AI_movement()

@@ -51,7 +51,6 @@ class Communication:
         count= 0 
         while True:
             response = serializer.readline().decode().split()
-            print(response)
             if len(response) > 5:
                 final.append(response)
                 count+=1
@@ -80,24 +79,17 @@ class Communication:
         return final
 
     def send_message(self, message):
-        # TODO mostrar as mensagem no display
         print(message)
 
     def request_bitBoard(self):
-        # TODO descomentar quando for testar com a eletronica
         # Le a bitboard da eletronica
-        raw = self.serializer_comunication("800")
+        raw = self.serializer_comunication("8000")
 
-        # TODO comentar quando for testar com a eletronica
         # Simula uma leitura de bitboard de um txt
         # raw = self.get_bit_board_txt()
 
         bitBoard = board.transform_raw_board(raw)
         return bitBoard
-
-    def get_give_up(self):
-        # TODO caso o usuario desista do jogo
-        return
 
     def get_bit_board_txt(self):
         time.sleep(2)

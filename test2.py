@@ -1,9 +1,11 @@
 import time
 from Communication import Communication
+from Board import Board
 
 comunication = Communication()
+board = Board()
 
 while True:
 
-    comunication.serializer_comunication("800")
-    time.sleep(0.5)
+    board.print_list_of_lists(comunication.request_bitBoard())
+    # time.sleep(0.5)

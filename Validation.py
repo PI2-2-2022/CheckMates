@@ -8,31 +8,23 @@ class Validation:
     def __init__(self) -> None:
         pass
 
-    def is_game_over_or_drawn(self, currentFen: str) -> bool:
+    def validate_game_status(self, currentFen: str) -> bool:
         board = chess.Board(currentFen)
+        message = 'Jogada normal'
 
-        if board.is_checkmate():
-            # print(
-            #                 "Checkmate, Jogador 1 ganhou"
-            #                 if chess.Board(currentFen).turn == "w"
-            #                 else "Checkmate, Jogador 2 ganhou"
-            #             )
-            #             break
-            message = "Check Mate!"
-        if board.is_stalemate():
+        if board.is_check(): 
+            message = "Usuário em Check!" if chess.Board(currentFen).turn == "w" else "Inteligência Artificial em Check!"
+        elif board.is_checkmate():
+            message = "Checkmate, Usuário ganhou" if chess.Board(currentFen).turn == "w" else "Checkmate, Inteligência Artificial ganhou"
+        elif board.is_stalemate():
             message = "Stale Mate!"
-        if board.is_insufficient_material():
+        elif board.is_insufficient_material():
             message = "Peças insuficientes!"
 
-        if (
-            board.is_checkmate()
-            or board.is_stalemate()
-            or board.is_insufficient_material()
-        ):
-            Communication.send_message(message)
-            return True
-        else:
-            return False
+        # Communication.send_message(message)
+        print(message)
+
+        return board.is_checkmate() or board.is_stalemate() or board.is_insufficient_material()
 
     def is_stalemate(self, currentFen: str) -> bool:
         board = chess.Board(currentFen)

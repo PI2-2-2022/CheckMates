@@ -155,7 +155,7 @@ def squares_to_move(start, end):
 
 
 def set_cnc_on_piece(place_to_go):
-    local_now = communication.simple_comm("600",2)
+    local_now = communication.simple_comm("6000",2)
     print("local atual = ", local_now)
     to_go = chessboard[place_to_go]
     x_to_go = to_go[0]

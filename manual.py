@@ -7,9 +7,8 @@ moviment  = Movements()
 def teste():
     moviment.calibra()
     while True:
-        start = input()
-        end = input()
-        moviment.game_movement(start,end)
+        move = input()
+        moviment.game_movement(move[:2],move[2:])
         # communication.simple_comm("530",3)
 
 teste()

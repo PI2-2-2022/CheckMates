@@ -18,7 +18,7 @@ class Board:
         origin = None
         for idx, x in enumerate(targetBitBoard):
             for idy, y in enumerate(x):
-                row = 8 - idx
+                row =  abs(idx- 8)
                 column = chr(idy + 97)
                 if targetBitBoard[idx][idy] == 0 and currentBitBoard[idx][idy] == 1:
                     origin = f"{column}{row}"
@@ -43,7 +43,8 @@ class Board:
         for item in raw:
             row = [1 if x == "0" else 0 for x in item[1:-1]]
             if len(row) == 8:
-                bitBoard.append(row)
+                newrow = row[::-1]
+                bitBoard.append(newrow)
         return bitBoard
 
     def is_initial_board(self, bitBoard) -> bool:

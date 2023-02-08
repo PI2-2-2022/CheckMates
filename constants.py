@@ -29,7 +29,3 @@ INITIAL_BOARD = [
 ]
 WHITE_PIECES = ["R", "N", "B", "Q", "K", "B", "N", "R", "P"]
 BLACK_PIECES = ["r", "n", "b", "q", "k", "b", "n", "r", "p"]
-
-# TODO pegar as coordenadas exatas da zona morta das peças brancas e das peças pretas
-ZONA_MORTA_WHITE = [[10, 30], [20, 30]]
-ZONA_MORTA_BLACK = [[10, 30], [20, 30]]
