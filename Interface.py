@@ -19,17 +19,25 @@ class Interface:
     currentBoard = INITIAL_BOARD
     currentFen = STARTING_FEN
     isAIMovement = False
-    AIEatenPieces = 0
+    AIEatenPieces = 1
     stockfish = None
 
     def __init__(self):
         pass
 
+    def recover_mode(self):
+        while True:
+            self.currentBitBoard = self.lastValidBitBoard
+            self.currentBoard = self.lastValidBoard
+            bitBoard = communication.request_bitBoard()
+            if bitBoard == self.lastValidBitBoard:
+                return
+
     def move_to_zona_morta(self, AIMove):
         # Pega qual a cor das peças da IA
-        turn = self.currentFen[-12]
-        offset = (17 if turn == "b" else 0) + self.AIEatenPieces
-        zonaMortaMove = AIMove[2:] + "m" + str(int(abs(offset))).rjust(2, "0")
+        zonaMortaMove = (
+            AIMove[2:] + "m" + str(int(abs(self.AIEatenPieces))).rjust(2, "0")
+        )
 
         communication.send_message("Movimento para zona morta: " + zonaMortaMove)
         movements.game_movement(zonaMortaMove)
@@ -95,12 +103,7 @@ class Interface:
                     communication.send_message(
                         "Modo de recuperação, volte o tabuleiro para o estado anterior!"
                     )
-                    while True:
-                        self.currentBitBoard = self.lastValidBitBoard
-                        self.currentBoard = self.lastValidBoard
-                        bitBoard = communication.request_bitBoard()
-                        if bitBoard == self.lastValidBitBoard:
-                            break
+                    self.recover_mode()
                 else:
                     communication.send_message(
                         "Movimento inválido! Realize o movimento correto ou volte a peça para a posição inicial"
