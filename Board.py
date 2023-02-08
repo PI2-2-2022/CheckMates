@@ -13,12 +13,12 @@ class Board:
         with open(Path(__file__).parent.joinpath("game.svg"), mode="w") as img:
             img.write(chess.svg.board(board, size=350))
 
-    def get_move(self, targetBitBoard, currentBitBoard):
+    def coords_to_move(self, targetBitBoard, currentBitBoard):
         to = None
         origin = None
         for idx, x in enumerate(targetBitBoard):
             for idy, y in enumerate(x):
-                row =  abs(idx- 8)
+                row = abs(idx - 8)
                 column = chr(idy + 97)
                 if targetBitBoard[idx][idy] == 0 and currentBitBoard[idx][idy] == 1:
                     origin = f"{column}{row}"
@@ -50,7 +50,7 @@ class Board:
     def is_initial_board(self, bitBoard) -> bool:
         return bitBoard == INITIAL_BIT_BOARD
 
-    def update_board(self, currentBoard, move):
+    def update_board(self, currentBoard, move, emptyValue=" "):
         coords = self.move_to_coords(move)
         # Pega as coordenadas da origem do movimento
         originX = coords[0][0]
@@ -61,7 +61,7 @@ class Board:
 
         # Substitui a peça do destino pela da origem e coloca vazio na origem.
         piece = currentBoard[originX][originY]
-        currentBoard[originX][originY] = " "
+        currentBoard[originX][originY] = emptyValue
         currentBoard[destinationX][destinationY] = piece
 
         return currentBoard
@@ -99,4 +99,4 @@ class Board:
         y = coords[1][1]
 
         piece = currentBoard[x][y]
-        return not piece == ' ' 
+        return not piece == " "

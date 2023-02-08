@@ -5,17 +5,15 @@ load_dotenv()
 
 STOCKFISH_PATH = os.getenv("STOCKFISH_PATH")
 STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-FILLED_BIT_ROW = [1, 1, 1, 1, 1, 1, 1, 1]
-EMPTY_BIT_ROW = [0, 0, 0, 0, 0, 0, 0, 0]
 INITIAL_BIT_BOARD = [
-    FILLED_BIT_ROW,
-    FILLED_BIT_ROW,
-    EMPTY_BIT_ROW,
-    EMPTY_BIT_ROW,
-    EMPTY_BIT_ROW,
-    EMPTY_BIT_ROW,
-    FILLED_BIT_ROW,
-    FILLED_BIT_ROW,
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
 ]
 INITIAL_BOARD = [
     ["r", "n", "b", "q", "k", "b", "n", "r"],

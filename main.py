@@ -2,16 +2,22 @@ from stockfish import Stockfish
 from Interface import Interface
 from constants import STOCKFISH_PATH
 from Movements import Movements
+from Communication import Communication
+
 
 interface = Interface()
 movements = Movements()
+communication = Communication()
 
 
 def main():
+    communication.send_message("Calibrando Motor...")
     movements.calibra()
+    communication.send_message("Motor calibrado!")
+    level = 5
     stockfish = Stockfish(
         STOCKFISH_PATH,
-        depth=5,
+        depth=level,
         parameters={
             "Debug Log File": "",
             "Contempt": 0,
@@ -22,7 +28,7 @@ def main():
             # Default size is 16 MB. It's recommended that you increase this value, but keep it as some power of 2. E.g., if you're fine using 2 GB of RAM, set Hash to 2048 (11th power of 2).
             "Hash": 512,
             "MultiPV": 1,
-            "Skill Level": 5,
+            "Skill Level": level,
             "Move Overhead": 10,
             "Minimum Thinking Time": 20,
             "Slow Mover": 100,

@@ -10,30 +10,10 @@ serializer = serial.Serial("/dev/ttyUSB0", 9600)
 
 
 class Communication:
+    previousMessage = ""
+
     def __init__(self) -> None:
         pass
-
-    def fen_to_matrix(self, fen):  # COMMUNICATION
-        rows = str(fen.split(" ")[0]).split("/")
-        matrix = []
-        for row in rows:
-            matrix_row = []
-            for char in row:
-                if char.isnumeric():
-                    matrix_row += [" " for _ in range(int(char))]
-                else:
-                    matrix_row.append(char)
-            matrix.append(matrix_row)
-        return matrix
-
-    def matrix_to_bitboard(self, matrix):  # COMMUNICATION
-        for i in range(8):
-            for j in range(8):
-                if not matrix[i][j] == " ":
-                    matrix[i][j] = 1
-                else:
-                    matrix[i][j] = 0
-        return matrix
 
     def serializer_comunication(self, message):
         # extract COM port automatically
@@ -45,16 +25,16 @@ class Communication:
         time.sleep(2)  # wait for communication to get established
 
         serializer.write(message.encode())
-         # messages needs to be sent in binary
+        # messages needs to be sent in binary
         # Read multiple lines of data
         final = []
-        count= 0 
+        count = 0
         while True:
             response = serializer.readline().decode().split()
             if len(response) > 5:
                 final.append(response)
-                count+=1
-            if count==8:
+                count += 1
+            if count == 8:
                 return final
 
     def simple_comm(self, message, size):
@@ -79,7 +59,9 @@ class Communication:
         return final
 
     def send_message(self, message):
-        print(message)
+        if not message == self.previousMessage:
+            self.previousMessage = message
+            print(message)
 
     def request_bitBoard(self):
         # Le a bitboard da eletronica

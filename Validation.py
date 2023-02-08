@@ -1,6 +1,8 @@
 import chess
 from Communication import Communication
 
+communication = Communication()
+
 
 class Validation:
     # Classe responsável por administrar as regras e violações do jogo
@@ -10,21 +12,33 @@ class Validation:
 
     def validate_game_status(self, currentFen: str) -> bool:
         board = chess.Board(currentFen)
-        message = 'Jogada normal'
+        message = None
 
-        if board.is_check(): 
-            message = "Usuário em Check!" if chess.Board(currentFen).turn == "w" else "Inteligência Artificial em Check!"
+        if board.is_check():
+            message = (
+                "Você está em Check!"
+                if chess.Board(currentFen).turn == "b"
+                else "Inteligência Artificial em Check!"
+            )
         elif board.is_checkmate():
-            message = "Checkmate, Usuário ganhou" if chess.Board(currentFen).turn == "w" else "Checkmate, Inteligência Artificial ganhou"
+            message = (
+                "Checkmate, você ganhou"
+                if chess.Board(currentFen).turn == "b"
+                else "Checkmate, Inteligência Artificial ganhou"
+            )
         elif board.is_stalemate():
-            message = "Stale Mate!"
+            message = "Stale Mate! Empatou..."
         elif board.is_insufficient_material():
-            message = "Peças insuficientes!"
+            message = "Peças insuficientes! Empatou..."
 
-        # Communication.send_message(message)
-        print(message)
+        if message:
+            communication.send_message(message)
 
-        return board.is_checkmate() or board.is_stalemate() or board.is_insufficient_material()
+        return (
+            board.is_checkmate()
+            or board.is_stalemate()
+            or board.is_insufficient_material()
+        )
 
     def is_stalemate(self, currentFen: str) -> bool:
         board = chess.Board(currentFen)
