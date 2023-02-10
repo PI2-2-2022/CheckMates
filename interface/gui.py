@@ -39,6 +39,7 @@ class App(ctk.CTk):
         self.title("CHECK MATES - GAME")
         self.geometry(f"{WIDTH}x{HEIGHT}")
         self.resizable(False, False)
+        self.attributes("-fullscreen", True)
 
         self.current_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -183,6 +184,16 @@ class App(ctk.CTk):
             font=ctk.CTkFont(size=20, weight="bold"),
         )
         self.msg_text.grid(row=0, column=1, pady=5, sticky="NSEW")
+
+        self.leave_button = ctk.CTkButton(
+            master=self.board_game_frame,
+            text="Desistir",
+            fg_color="red",
+            text_color="white",
+            hover_color="blue",
+            command=self.leave_game_btn,
+        )
+        self.leave_button.grid(row=2, column=0, pady=10)
 
     # =====================================< CONFIG FRAME >============================================
     def config(self):
