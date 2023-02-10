@@ -1,12 +1,9 @@
 import os
 import threading
 import tkinter as tk
-from time import sleep
 from tkinter import messagebox
-from turtle import bgcolor
 
 import customtkinter as ctk
-from games_chess import start_game_async
 from PIL import Image
 
 WIDTH = 480
@@ -104,7 +101,7 @@ class App(ctk.CTk):
         while True:
 
             # message = função que retorna a mensagem
-            jogada = input("Digite o codigo: ")
+            jogada = input("Digite a Jogada: ")
             # msg = input("Digite a mensagem: ")
 
             # message = {"code": code, "text": msg}
@@ -120,7 +117,7 @@ class App(ctk.CTk):
                     weight="bold",
                 ),
             )
-            self.msg_text.grid(row=2, column=1, pady=5, sticky="NSEW")
+            self.msg_text.grid(row=3, column=1, pady=5, sticky="NSEW")
 
             self.game_frame.update()
 
@@ -132,14 +129,17 @@ class App(ctk.CTk):
                     weight="bold",
                 ),
             )
-            self.msg_text.grid(row=3, column=1, pady=5)
+            self.msg_text.grid(row=4, column=1, pady=5)
 
             self.game_frame.update()
 
             self.msg_text = ctk.CTkLabel(
                 self.msg_game_frame,
                 text="Mensagem final",
-                font=ctk.CTkFont(size=15, weight="bold"),
+                font=ctk.CTkFont(
+                    size=15,
+                    weight="bold",
+                ),
             )
             self.msg_text.grid(row=5, column=1, pady=5, sticky="ew")
 
