@@ -6,7 +6,7 @@ from Board import Board
 
 board = Board()
 
-serializer = serial.Serial("/dev/ttyUSB2", 9600)
+serializer = serial.Serial("/dev/ttyUSB0", 9600)
 
 
 class Communication:

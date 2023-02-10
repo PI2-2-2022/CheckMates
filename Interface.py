@@ -20,6 +20,8 @@ class Interface:
     currentBoard = INITIAL_BOARD
     currentFen = STARTING_FEN
     isAIMovement = False
+    AICastlingAvailable = True
+    UserCastlingAvailable = True
     AIEatenPieces = 1
     stockfish = None
 
@@ -41,11 +43,36 @@ class Interface:
         movements.game_movement(zonaMortaMove)
         self.AIEatenPieces = self.AIEatenPieces + 1
 
+    def user_castling_move(self, castleMove):
+        self.UserCastlingAvailable = False
+        self.currentBitBoard = board.update_board(self.currentBitBoard, castleMove, 0)
+        self.currentBoard = board.update_board(self.currentBoard, castleMove)
+        communication.send_message("Mova a torre para completar o hawk!")
+        while True:
+            expectedBitBoard = communication.request_bitBoard()
+            if expectedBitBoard == self.currentBitBoard: 
+                break
+        return
+
+    def AI_castling_move(self, castleMove, message):
+        self.AICastlingAvailable = False
+        self.currentBitBoard = board.update_board(self.currentBitBoard, castleMove, 0)
+        self.currentBoard = board.update_board(self.currentBoard, castleMove)
+        movements.game_movement(castleMove)  
+        communication.send_message(message)
+
     def make_AI_movement(self):
         self.isAIMovement = True
         self.stockfish.set_fen_position(self.currentFen)
         bestMove = self.stockfish.get_best_move()
 
+        # Castling logic
+        if self.AICastlingAvailable and board.is_AI_castling_right(bestMove, self.currentBoard):
+            self.AI_castling_move('h8f8', 'Hawk direito concluído!')
+        elif self.AICastlingAvailable and board.is_AI_castling_left(bestMove, self.currentBoard):
+            self.AI_castling_move('a8d8', 'Hawk esquerdo concluído!')
+
+        # Zona morta logic
         if board.destination_has_piece(bestMove, self.currentBoard):
             self.move_to_zona_morta(bestMove)
             communication.send_message("Movimento para zona morta concluido!")
@@ -96,6 +123,11 @@ class Interface:
                     self.currentBoard = board.update_board(self.currentBoard, move)
                     board.update_SVG(self.currentFen)
 
+                    if self.UserCastlingAvailable and board.is_user_castling_right(): 
+                        self.user_castling_move('h1f1')
+                    elif self.UserCastlingAvailable and board.is_user_castling_left():
+                        self.user_castling_move('a1d1')
+
                     # Verifica se o usuário fez um movimento que resulta no fim do jogo
                     if validation.validate_game_status(self.currentFen):
                         break
@@ -122,12 +154,12 @@ class Interface:
         self.stockfish = stockfish
 
         # Caso o tabuleiro incial não seja válido, manda uma mensagem para o display
-        # if not board.is_initial_board(bitBoard):
-        #     communication.send_message(
-        #         "Tabuleiro inicial inválido! Verifique ou reorganize as peças."
-        #     )
-        #     self.start_game(stockfish)
-        # else:
-        communication.send_message("Jogo iniciado!")
-        board.update_SVG(self.currentFen)
-        self.game_loop()
+        if not board.is_initial_board(bitBoard):
+            communication.send_message(
+                "Tabuleiro inicial inválido! Verifique ou reorganize as peças."
+            )
+            self.start_game(stockfish)
+        else:
+            communication.send_message("Jogo iniciado!")
+            board.update_SVG(self.currentFen)
+            self.game_loop()
