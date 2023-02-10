@@ -99,4 +99,5 @@ class Board:
         y = coords[1][1]
 
         piece = currentBoard[x][y]
+        # print("peça na coordenada [" + str(x) + "," + str(y) + "]:", piece)
         return not piece == " "

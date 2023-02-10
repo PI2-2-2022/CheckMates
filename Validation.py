@@ -17,14 +17,14 @@ class Validation:
         if board.is_check():
             message = (
                 "Você está em Check!"
-                if chess.Board(currentFen).turn == "b"
+                if chess.Board(currentFen).turn == "w"
                 else "Inteligência Artificial em Check!"
             )
         elif board.is_checkmate():
             message = (
-                "Checkmate, você ganhou"
-                if chess.Board(currentFen).turn == "b"
-                else "Checkmate, Inteligência Artificial ganhou"
+                "Checkmate, você ganhou!"
+                if chess.Board(currentFen).turn == "w"
+                else "Checkmate, Inteligência Artificial ganhou!"
             )
         elif board.is_stalemate():
             message = "Stale Mate! Empatou..."

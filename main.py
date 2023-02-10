@@ -14,7 +14,7 @@ def main():
     communication.send_message("Calibrando Motor...")
     movements.calibra()
     communication.send_message("Motor calibrado!")
-    level = 5
+    level = 1
     stockfish = Stockfish(
         STOCKFISH_PATH,
         depth=level,
@@ -30,7 +30,7 @@ def main():
             "MultiPV": 1,
             "Skill Level": level,
             "Move Overhead": 10,
-            "Minimum Thinking Time": 20,
+            "Minimum Thinking Time": level * 1.5,
             "Slow Mover": 100,
             "UCI_Chess960": "false",
             "UCI_LimitStrength": "false",

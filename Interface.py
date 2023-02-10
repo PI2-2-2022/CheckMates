@@ -1,3 +1,4 @@
+import time
 from Validation import Validation
 from Communication import Communication
 from Board import Board
@@ -35,10 +36,7 @@ class Interface:
 
     def move_to_zona_morta(self, AIMove):
         # Pega qual a cor das peças da IA
-        zonaMortaMove = (
-            AIMove[2:] + "m" + str(int(abs(self.AIEatenPieces))).rjust(2, "0")
-        )
-
+        zonaMortaMove = (AIMove[2:] + "m" + str(self.AIEatenPieces))
         communication.send_message("Movimento para zona morta: " + zonaMortaMove)
         movements.game_movement(zonaMortaMove)
         self.AIEatenPieces = self.AIEatenPieces + 1
@@ -46,26 +44,32 @@ class Interface:
     def make_AI_movement(self):
         self.isAIMovement = True
         self.stockfish.set_fen_position(self.currentFen)
-        AIMove = self.stockfish.get_best_move()
-        communication.send_message("Movimento IA: " + AIMove)
+        bestMove = self.stockfish.get_best_move()
 
-        if board.destination_has_piece(AIMove, self.currentBoard):
-            self.move_to_zona_morta(AIMove)
+        if board.destination_has_piece(bestMove, self.currentBoard):
+            self.move_to_zona_morta(bestMove)
+            communication.send_message("Movimento para zona morta concluido!")
 
-        movements.game_movement(AIMove)
-        self.stockfish.make_moves_from_current_position([AIMove])
+        communication.send_message("Movimento IA: " + bestMove)
+        movements.game_movement(bestMove)
+        self.stockfish.make_moves_from_current_position([bestMove])
         self.currentFen = self.stockfish.get_fen_position()
-        self.currentBitBoard = board.update_board(self.currentBitBoard, AIMove, 0)
-        self.currentBoard = board.update_board(self.currentBoard, AIMove)
+        self.currentBitBoard = board.update_board(self.currentBitBoard, bestMove, 0)
+        self.currentBoard = board.update_board(self.currentBoard, bestMove)
         board.update_SVG(self.currentFen)
 
         # Se a jogada do usuário e da IA forem válidas, salva os tabuleiros válidos que poderão ser utilizados no modo de recuperação
         self.lastValidBitBoard = self.currentBitBoard
         self.lastValidBoard = self.currentBoard
+        movements.calibra()
 
     def game_loop(self):
         while not validation.validate_game_status(self.currentFen):
             bitBoard = communication.request_bitBoard()
+            print(" Leitura ")
+            board.print_list_of_lists(bitBoard)
+            print(" Current ")
+            board.print_list_of_lists(self.currentBitBoard)
 
             # Caso os tabuleiros sejam diferentes e a flag da IA seja true, significa que o motor está movimentando a peça
             if not bitBoard == self.currentBitBoard and self.isAIMovement:
@@ -112,15 +116,18 @@ class Interface:
     def start_game(self, stockfish: Stockfish):
         # Pega a bit board inicial do jogo
         bitBoard = communication.request_bitBoard()
+        self.currentBitBoard = bitBoard
+        print(" Tabuleiro inicial ")
+        board.print_list_of_lists(bitBoard)
         self.stockfish = stockfish
 
         # Caso o tabuleiro incial não seja válido, manda uma mensagem para o display
-        if not board.is_initial_board(bitBoard):
-            communication.send_message(
-                "Tabuleiro inicial inválido! Verifique ou reorganize as peças."
-            )
-            self.start_game(stockfish)
-        else:
-            communication.send_message("Jogo iniciado!")
-            board.update_SVG(self.currentFen)
-            self.game_loop()
+        # if not board.is_initial_board(bitBoard):
+        #     communication.send_message(
+        #         "Tabuleiro inicial inválido! Verifique ou reorganize as peças."
+        #     )
+        #     self.start_game(stockfish)
+        # else:
+        communication.send_message("Jogo iniciado!")
+        board.update_SVG(self.currentFen)
+        self.game_loop()

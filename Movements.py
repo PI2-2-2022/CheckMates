@@ -2,161 +2,9 @@ from Communication import Communication
 
 communication = Communication()
 
-chessboard = {
-    "a8": [5, 0],
-    "b8": [15, 0],
-    "c8": [25, 0],
-    "d8": [35, 0],
-    "e8": [45, 0],
-    "f8": [55, 0],
-    "g8": [65, 0],
-    "h8": [75, 0],
-    "a7": [5, 10],
-    "b7": [15, 10],
-    "c7": [25, 10],
-    "d7": [35, 10],
-    "e7": [45, 10],
-    "f7": [55, 10],
-    "g7": [65, 10],
-    "h7": [75, 10],
-    "a6": [5, 20],
-    "b6": [15, 20],
-    "c6": [25, 20],
-    "d6": [35, 20],
-    "e6": [45, 20],
-    "f6": [55, 20],
-    "g6": [65, 20],
-    "h6": [75, 20],
-    "a5": [5, 30],
-    "b5": [15, 30],
-    "c5": [25, 30],
-    "d5": [35, 30],
-    "e5": [45, 30],
-    "f5": [55, 30],
-    "g5": [65, 30],
-    "h5": [75, 30],
-    "a4": [5, 40],
-    "b4": [15, 40],
-    "c4": [25, 40],
-    "d4": [35, 40],
-    "e4": [45, 40],
-    "f4": [55, 40],
-    "g4": [65, 40],
-    "h4": [75, 40],
-    "a3": [5, 50],
-    "b3": [15, 50],
-    "c3": [25, 50],
-    "d3": [35, 50],
-    "e3": [45, 50],
-    "f3": [55, 50],
-    "g3": [65, 50],
-    "h3": [75, 50],
-    "a2": [5, 60],
-    "b2": [15, 60],
-    "c2": [25, 60],
-    "d2": [35, 60],
-    "e2": [45, 60],
-    "f2": [55, 60],
-    "g2": [65, 60],
-    "h2": [75, 60],
-    "a1": [5, 70],
-    "b1": [15, 70],
-    "c1": [25, 70],
-    "d1": [35, 70],
-    "e1": [45, 70],
-    "f1": [55, 70],
-    "g1": [65, 70],
-    "h1": [75, 70],
-    "h1": [75, 70],
-}
-offset = 30
-chessboard_with_offset = {
-    "a8": [5 + offset, 0],
-    "b8": [15 + offset, 0],
-    "c8": [25 + offset, 0],
-    "d8": [35 + offset, 0],
-    "e8": [45 + offset, 0],
-    "f8": [55 + offset, 0],
-    "g8": [65 + offset, 0],
-    "h8": [75 + offset, 0],
-    "a7": [5 + offset, 10],
-    "b7": [15 + offset, 10],
-    "c7": [25 + offset, 10],
-    "d7": [35 + offset, 10],
-    "e7": [45 + offset, 10],
-    "f7": [55 + offset, 10],
-    "g7": [65 + offset, 10],
-    "h7": [75 + offset, 10],
-    "a6": [5 + offset, 20],
-    "b6": [15 + offset, 20],
-    "c6": [25 + offset, 20],
-    "d6": [35 + offset, 20],
-    "e6": [45 + offset, 20],
-    "f6": [55 + offset, 20],
-    "g6": [65 + offset, 20],
-    "h6": [75 + offset, 20],
-    "a5": [5 + offset, 30],
-    "b5": [15 + offset, 30],
-    "c5": [25 + offset, 30],
-    "d5": [35 + offset, 30],
-    "e5": [45 + offset, 30],
-    "f5": [55 + offset, 30],
-    "g5": [65 + offset, 30],
-    "h5": [75 + offset, 30],
-    "a4": [5 + offset, 40],
-    "b4": [15 + offset, 40],
-    "c4": [25 + offset, 40],
-    "d4": [35 + offset, 40],
-    "e4": [45 + offset, 40],
-    "f4": [55 + offset, 40],
-    "g4": [65 + offset, 40],
-    "h4": [75 + offset, 40],
-    "a3": [5 + offset, 50],
-    "b3": [15 + offset, 50],
-    "c3": [25 + offset, 50],
-    "d3": [35 + offset, 50],
-    "e3": [45 + offset, 50],
-    "f3": [55 + offset, 50],
-    "g3": [65 + offset, 50],
-    "h3": [75 + offset, 50],
-    "a2": [5 + offset, 60],
-    "b2": [15 + offset, 60],
-    "c2": [25 + offset, 60],
-    "d2": [35 + offset, 60],
-    "e2": [45 + offset, 60],
-    "f2": [55 + offset, 60],
-    "g2": [65 + offset, 60],
-    "h2": [75 + offset, 60],
-    "a1": [5 + offset, 70],
-    "b1": [15 + offset, 70],
-    "c1": [25 + offset, 70],
-    "d1": [35 + offset, 70],
-    "e1": [45 + offset, 70],
-    "f1": [55 + offset, 70],
-    "g1": [65 + offset, 70],
-    "h1": [75 + offset, 70],
-    "m01": [5, 0],
-    "m02": [5, 10],
-    "m03": [5, 20],
-    "m04": [5, 30],
-    "m05": [5, 40],
-    "m06": [5, 50],
-    "m07": [5, 60],
-    "m08": [5, 70],
-    "m09": [15, 0],
-    "m10": [15, 10],
-    "m11": [15, 20],
-    "m12": [15, 30],
-    "m13": [15, 40],
-    "m14": [15, 50],
-    "m15": [15, 60],
-    "m16": [15, 70],
-}
-
-chessboard = chessboard_with_offset
-
-
 class Movements:
+    offset = 30
+
     def __init__(self) -> None:
         pass
 
@@ -165,10 +13,23 @@ class Movements:
         communication.simple_comm("9000", 2)
         return
 
+    def move_to_coords(self, move):
+        if move[0] == 'm':
+            num = int(move[1:])
+            x = 5 if(num < 9) else 15
+            y = (num + 1) * 10 if(num < 9) else (num - 7) * 10 
+            return [x, y]
+
+        column = ord(move[0]) - ord('a') + 1
+        row = int(move[1])
+        x = (5 + column * 10) - 10
+        y = (8 - row) * 10
+        return [x + self.offset, y]
+
     def set_cnc_on_piece(self, place_to_go):
         local_now = communication.simple_comm("6000", 2)
         # print("local atual = ", local_now)
-        to_go = chessboard[place_to_go]
+        to_go = self.move_to_coords(place_to_go)
         x_to_go = to_go[0]
         Y_to_go = to_go[1]
         # print("quero ir: ", to_go)
@@ -201,11 +62,8 @@ class Movements:
 
     def squares_to_move(self, start, end):
         # set_cnc_on_piece(start)
-        # print(start, end)
-        current_coordinates = chessboard[start]
-        # print("inicial", current_coordinates)
-        end_coordinates = chessboard[end]
-        # print("final", end_coordinates)
+        current_coordinates = self.move_to_coords(start)
+        end_coordinates = self.move_to_coords(end)
 
         horizontal_diff = end_coordinates[0] - current_coordinates[0]
 
@@ -299,6 +157,7 @@ class Movements:
         communication.simple_comm("4000", 2)
         # print("vai ser", start, end)
         squares = self.squares_to_move(start, end)
+        # print('squares: ', squares)
         for square in squares:
             if (
                 square != "100"

@@ -6,7 +6,7 @@ from Board import Board
 
 board = Board()
 
-serializer = serial.Serial("/dev/ttyUSB0", 9600)
+serializer = serial.Serial("/dev/ttyUSB2", 9600)
 
 
 class Communication:
@@ -55,7 +55,7 @@ class Communication:
             # else: break
 
         # serializer.close()
-
+        # board.print_list_of_lists(final)
         return final
 
     def send_message(self, message):
@@ -66,6 +66,7 @@ class Communication:
     def request_bitBoard(self):
         # Le a bitboard da eletronica
         raw = self.serializer_comunication("8000")
+        #print(raw)
 
         # Simula uma leitura de bitboard de um txt
         # raw = self.get_bit_board_txt()
