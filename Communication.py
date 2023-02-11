@@ -6,12 +6,10 @@ from Board import Board
 
 board = Board()
 
-serializer = serial.Serial("/dev/ttyUSB2", 9600)
+serializer = serial.Serial("/dev/ttyUSB0", 9600)
 
 
 class Communication:
-    previousMessage = ""
-
     def __init__(self) -> None:
         pass
 
@@ -59,14 +57,12 @@ class Communication:
         return final
 
     def send_message(self, message):
-        if not message == self.previousMessage:
-            self.previousMessage = message
-            print(message)
+        with open("message.txt", "w") as file:
+            file.write(f"'{message}'")
 
     def request_bitBoard(self):
         # Le a bitboard da eletronica
         raw = self.serializer_comunication("8000")
-        #print(raw)
 
         # Simula uma leitura de bitboard de um txt
         # raw = self.get_bit_board_txt()
@@ -76,7 +72,7 @@ class Communication:
 
     def get_bit_board_txt(self):
         time.sleep(2)
-        with open("bitboard.txt", "r") as file:
+        with open("bitboard_response.txt", "r") as file:
             content = file.read()
         bitBoard = ast.literal_eval(content)
         return bitBoard

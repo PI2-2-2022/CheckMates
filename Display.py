@@ -1,10 +1,13 @@
+import ast
 import os
+import threading
+import time
 import tkinter as tk
 from tkinter import messagebox
-from constants import INITIAL_BIT_BOARD
-
+from Interface import Interface
 import customtkinter as ctk
 from PIL import Image
+
 
 WIDTH = 480
 HEIGHT = 320
@@ -13,8 +16,10 @@ ctk.set_appearance_mode("Dark")
 
 
 class Display(ctk.CTk):
-    bitBoard = INITIAL_BIT_BOARD
-    message = "Movimento inválido! Realize o movimento correto ou volte a peça para a posição inicial"
+    stockfish = None
+    bitBoard = [[]]
+    message = ""
+    stop_threads = False
 
     def __init__(self):
         super().__init__()
@@ -51,7 +56,7 @@ class Display(ctk.CTk):
             text="Iniciar jogo!",
             font=ctk.CTkFont(size=20, weight="bold"),
             image=self.icon_play,
-            command=self.game,
+            command=self.start_threads,
         )
         self.btn_start.place(x=220, y=140, anchor="ne")
 
@@ -151,6 +156,11 @@ class Display(ctk.CTk):
         self.back_button.grid(row=5, column=0, sticky="s")
 
     def go_to_home(self):
+        self.stop_threads = True
+        self.interface.stopGame = True
+        self.message = ""
+        self.bitBoard = [[]]
+
         try:
             self.config_frame.grid_forget()
         except:
@@ -169,7 +179,7 @@ class Display(ctk.CTk):
         try:
             self.config_current_option_frame.grid_forget()
         except:
-            print("")
+            e = ""
         finally:
             self.load_images()
             self.config_current_option_frame = ctk.CTkFrame(master=self.config_frame)
@@ -277,14 +287,7 @@ class Display(ctk.CTk):
         return
 
     def game(self):
-        try:
-            self.home_frame.grid_forget()
-        except:
-            e = ""
-        try:
-            self.game_frame.grid_forget()
-        except:
-            e = ""
+        self.home_frame.grid_forget()
 
         self.game_frame = ctk.CTkFrame(self)
         self.game_frame.grid(row=0, column=0)
@@ -298,15 +301,7 @@ class Display(ctk.CTk):
         )
         self.bitboard_title.grid(row=0, column=0, pady=(10, 5))
 
-        self.bitboard_frame = ctk.CTkFrame(master=self.game_board_frame)
-        self.bitboard_frame.grid_rowconfigure(8, weight=1)
-        self.bitboard_frame.grid_columnconfigure(8, weight=1)
-        self.bitboard_frame.grid(row=1, column=0, pady=(15, 40), padx=(10, 10))
-
-        for x, row in enumerate(self.bitBoard):
-            for y, item in enumerate(row):
-                newEl = ctk.CTkLabel(master=self.bitboard_frame, text=item, padx=3)
-                newEl.grid(row=x, column=y)
+        self.game_board()
 
         self.game_msg_frame = ctk.CTkFrame(master=self.game_frame, corner_radius=0)
         self.game_msg_frame.pack(side="left", fill="both", expand=True)
@@ -318,14 +313,7 @@ class Display(ctk.CTk):
         )
         self.msg_title.pack(side="top", pady=(10), padx=(30))
 
-        self.msg = ctk.CTkLabel(
-            master=self.game_msg_frame,
-            text=self.message,
-            wraplength=220,
-            font=ctk.CTkFont(size=13, weight="normal"),
-            justify=tk.LEFT,
-        )
-        self.msg.pack(side="top", pady=(10, 5))
+        self.game_msg()
 
         self.btn_give_up = ctk.CTkButton(
             master=self.game_msg_frame,
@@ -337,9 +325,32 @@ class Display(ctk.CTk):
         )
         self.btn_give_up.pack(side="bottom", padx=10, pady=(10, 45))
 
-        print("Iniciar jogo")
-        print(self.level_var.get())
-        print(self.color_var.get())
+    def game_board(self):
+        self.bitboard_frame = ctk.CTkFrame(master=self.game_board_frame)
+        self.bitboard_frame.grid_rowconfigure(8, weight=1)
+        self.bitboard_frame.grid_columnconfigure(8, weight=1)
+
+        for x, row in enumerate(self.bitBoard):
+            for y, item in enumerate(row):
+                newEl = ctk.CTkLabel(master=self.bitboard_frame, text=item, padx=3)
+                newEl.grid(row=x, column=y)
+
+        self.bitboard_frame.grid(row=1, column=0, pady=(15, 40), padx=(10, 10))
+
+    def game_msg(self):
+        try:
+            self.msg.pack_forget()
+        except:
+            e = ""
+
+        self.msg = ctk.CTkLabel(
+            master=self.game_msg_frame,
+            text=self.message,
+            wraplength=220,
+            font=ctk.CTkFont(size=13, weight="normal"),
+            justify=tk.LEFT,
+        )
+        self.msg.pack(side="top", pady=(10, 5))
 
     def give_up(self):
         answer = messagebox.askyesno(
@@ -408,3 +419,34 @@ class Display(ctk.CTk):
             Image.open(f"{self.current_path}/assets/config/level/level_hard.png"),
             size=(70, 70),
         )
+
+    def start_threads(self):
+        self.interface = Interface(self.color_var.get(), self.level_var.get())
+        self.stop_threads = False
+        self.interface.stopGame = False
+
+        self.game_frame_th = threading.Thread(target=self.start_game_frame)
+        self.game_frame_th.start()
+        self.game_th = threading.Thread(target=self.interface.start_game)
+        self.game_th.start()
+
+    def start_game_frame(self):
+        self.game()
+
+        while not self.stop_threads:
+            with open("message.txt", "r") as file:
+                content = file.read()
+            self.message = ast.literal_eval(content)
+
+            with open("bitboard.txt", "r") as file:
+                content = file.read()
+            self.bitBoard = ast.literal_eval(content)
+
+            self.game_msg()
+            self.game_board()
+            time.sleep(1)
+
+
+if __name__ == "__main__":
+    display = Display()
+    display.mainloop()

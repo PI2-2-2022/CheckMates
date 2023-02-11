@@ -3,7 +3,7 @@ from Validation import Validation
 from Communication import Communication
 from Board import Board
 from stockfish import Stockfish
-from constants import STARTING_FEN, INITIAL_BIT_BOARD, INITIAL_BOARD
+from constants import STARTING_FEN, INITIAL_BIT_BOARD, INITIAL_BOARD, STOCKFISH_PATH
 from Movements import Movements
 
 board = Board()
@@ -13,18 +13,18 @@ movements = Movements()
 
 
 class Interface:
-    # Representa a classe que realiza a a interface com o usuário
-    lastValidBitBoard = INITIAL_BIT_BOARD
-    lastValidBoard = INITIAL_BOARD
-    currentBitBoard = INITIAL_BIT_BOARD
-    currentBoard = INITIAL_BOARD
-    currentFen = STARTING_FEN
-    isAIMovement = False
-    AIEatenPieces = 1
-    stockfish = None
-
-    def __init__(self):
-        pass
+    def __init__(self, color, level):
+        self.lastValidBitBoard = INITIAL_BIT_BOARD
+        self.lastValidBoard = INITIAL_BOARD
+        self.currentBitBoard = INITIAL_BIT_BOARD
+        self.currentBoard = INITIAL_BOARD
+        self.currentFen = STARTING_FEN
+        self.isAIMovement = False
+        self.AIEatenPieces = 1
+        self.stockfish = None
+        self.stopGame = False
+        self.color = color
+        self.level = level
 
     def recover_mode(self):
         while True:
@@ -64,12 +64,12 @@ class Interface:
         movements.calibra()
 
     def game_loop(self):
-        while not validation.validate_game_status(self.currentFen):
+        while (
+            not validation.validate_game_status(self.currentFen) and not self.stopGame
+        ):
             bitBoard = communication.request_bitBoard()
-            print(" Leitura ")
-            board.print_list_of_lists(bitBoard)
-            print(" Current ")
-            board.print_list_of_lists(self.currentBitBoard)
+            with open("bitboard.txt", "w") as file:
+                file.write(str(bitBoard))
 
             # Caso os tabuleiros sejam diferentes e a flag da IA seja true, significa que o motor está movimentando a peça
             if not bitBoard == self.currentBitBoard and self.isAIMovement:
@@ -113,21 +113,43 @@ class Interface:
                         "Movimento inválido! Realize o movimento correto ou volte a peça para a posição inicial"
                     )
 
-    def start_game(self, stockfish: Stockfish):
+    def start_game(self):
+        self.stockfish = Stockfish(
+            STOCKFISH_PATH,
+            depth=self.level,
+            parameters={
+                "Debug Log File": "",
+                "Contempt": 0,
+                "Min Split Depth": 0,
+                # More threads will make the engine stronger, but should be kept at less than the number of logical processors on your computer.
+                "Threads": 1,
+                "Ponder": "false",
+                # Default size is 16 MB. It's recommended that you increase this value, but keep it as some power of 2. E.g., if you're fine using 2 GB of RAM, set Hash to 2048 (11th power of 2).
+                "Hash": 512,
+                "MultiPV": 1,
+                "Skill Level": self.level,
+                "Move Overhead": 10,
+                "Minimum Thinking Time": self.level * 1.5,
+                "Slow Mover": 100,
+                "UCI_Chess960": "false",
+                "UCI_LimitStrength": "false",
+                "UCI_Elo": 1350,
+            },
+        )
         # Pega a bit board inicial do jogo
         bitBoard = communication.request_bitBoard()
         self.currentBitBoard = bitBoard
-        print(" Tabuleiro inicial ")
-        board.print_list_of_lists(bitBoard)
-        self.stockfish = stockfish
+        with open("bitboard.txt", "w") as file:
+            file.write(str(bitBoard))
 
-        #  Caso o tabuleiro incial não seja válido, manda uma mensagem para o display
-        if not board.is_initial_board(bitBoard):
-            communication.send_message(
-                "Tabuleiro inicial inválido! Verifique ou reorganize as peças."
-            )
-            self.start_game(stockfish)
-        else:
-            communication.send_message("Jogo iniciado!")
-            board.update_SVG(self.currentFen)
-            self.game_loop()
+        board.update_SVG(self.currentFen)
+
+        while not board.is_initial_board(bitBoard) and not self.stopGame:
+            communication.send_message("Tabuleiro inicial inválido!")
+            bitBoard = communication.request_bitBoard()
+            self.currentBitBoard = bitBoard
+            with open("bitboard.txt", "w") as file:
+                file.write(str(bitBoard))
+
+        communication.send_message("Jogo iniciado!")
+        self.game_loop()
