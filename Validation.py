@@ -6,9 +6,17 @@ communication = Communication()
 
 class Validation:
     # Classe responsável por administrar as regras e violações do jogo
-
+    stopGame = False
     def __init__(self) -> None:
         pass
+
+    def set_stop_game(self, value):
+        print(value)
+        self.stopGame = value
+
+    def get_stop_game(self):
+        print(self.stopGame)
+        return self.stopGame
 
     def validate_game_status(self, currentFen: str) -> bool:
         board = chess.Board(currentFen)

@@ -40,7 +40,7 @@ class Interface:
         # Pega qual a cor das peças da IA
         zonaMortaMove = (AIMove[2:] + "m" + str(self.AIEatenPieces))
         communication.send_message("Movimento para zona morta: " + zonaMortaMove)
-        movements.game_movement(zonaMortaMove)
+        # movements.game_movement(zonaMortaMove)
         self.AIEatenPieces = self.AIEatenPieces + 1
 
     def user_castling_move(self, castleMove):
@@ -58,7 +58,7 @@ class Interface:
         self.AICastlingAvailable = False
         self.currentBitBoard = board.update_board(self.currentBitBoard, castleMove, 0)
         self.currentBoard = board.update_board(self.currentBoard, castleMove)
-        movements.game_movement(castleMove)  
+        # movements.game_movement(castleMove)  
         communication.send_message(message)
 
     def make_AI_movement(self):
@@ -78,7 +78,7 @@ class Interface:
             communication.send_message("Movimento para zona morta concluido!")
 
         communication.send_message("Movimento IA: " + bestMove)
-        movements.game_movement(bestMove)
+        # movements.game_movement(bestMove)
         self.stockfish.make_moves_from_current_position([bestMove])
         self.currentFen = self.stockfish.get_fen_position()
         self.currentBitBoard = board.update_board(self.currentBitBoard, bestMove, 0)
@@ -88,10 +88,10 @@ class Interface:
         # Se a jogada do usuário e da IA forem válidas, salva os tabuleiros válidos que poderão ser utilizados no modo de recuperação
         self.lastValidBitBoard = self.currentBitBoard
         self.lastValidBoard = self.currentBoard
-        movements.calibra()
+        # movements.calibra()
 
     def game_loop(self):
-        while not validation.validate_game_status(self.currentFen):
+        while not validation.validate_game_status(self.currentFen) and validation.get_stop_game():
             bitBoard = communication.request_bitBoard()
             print(" Leitura ")
             board.print_list_of_lists(bitBoard)
@@ -123,9 +123,9 @@ class Interface:
                     self.currentBoard = board.update_board(self.currentBoard, move)
                     board.update_SVG(self.currentFen)
 
-                    if self.UserCastlingAvailable and board.is_user_castling_right(): 
+                    if self.UserCastlingAvailable and board.is_user_castling_right(move, self.currentBoard): 
                         self.user_castling_move('h1f1')
-                    elif self.UserCastlingAvailable and board.is_user_castling_left():
+                    elif self.UserCastlingAvailable and board.is_user_castling_left(move, self.currentBoard):
                         self.user_castling_move('a1d1')
 
                     # Verifica se o usuário fez um movimento que resulta no fim do jogo
@@ -145,7 +145,8 @@ class Interface:
                         "Movimento inválido! Realize o movimento correto ou volte a peça para a posição inicial"
                     )
 
-    def start_game(self, stockfish: Stockfish):
+    def start_game(self, stockfish: Stockfish, color):
+        print(color)
         # Pega a bit board inicial do jogo
         bitBoard = communication.request_bitBoard()
         self.currentBitBoard = bitBoard
@@ -158,7 +159,7 @@ class Interface:
             communication.send_message(
                 "Tabuleiro inicial inválido! Verifique ou reorganize as peças."
             )
-            self.start_game(stockfish)
+            self.start_game(stockfish, color)
         else:
             communication.send_message("Jogo iniciado!")
             board.update_SVG(self.currentFen)
