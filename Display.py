@@ -20,6 +20,7 @@ class Display(ctk.CTk):
     bitBoard = [[]]
     message = ""
     stop_threads = False
+    interface = None
 
     def __init__(self):
         super().__init__()
@@ -157,7 +158,8 @@ class Display(ctk.CTk):
 
     def go_to_home(self):
         self.stop_threads = True
-        self.interface.stopGame = True
+        if self.interface:
+            self.interface.stopGame = True
         self.message = ""
         self.bitBoard = [[]]
 
