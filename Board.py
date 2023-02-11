@@ -101,3 +101,27 @@ class Board:
         piece = currentBoard[x][y]
         # print("peça na coordenada [" + str(x) + "," + str(y) + "]:", piece)
         return not piece == " "
+
+    def is_AI_castling_right(self, move, board):
+        coords = self.move_to_coords(move)
+        start = coords[0]
+        piece = board[start[0]][start[1]]
+        return piece == 'k' and move == 'e8g8'
+
+    def is_AI_castling_left(self, move, board):
+        coords = self.move_to_coords(move)
+        start = coords[0]
+        piece = board[start[0]][start[1]]
+        return piece == 'k' and move == 'e8c8'
+
+    def is_user_castling_right(self, move, board):
+        coords = self.move_to_coords(move)
+        start = coords[0]
+        piece = board[start[0]][start[1]]
+        return piece == 'K' and move == 'e1g1'
+
+    def is_user_castling_left(self, move, board):
+        coords = self.move_to_coords(move)
+        start = coords[0]
+        piece = board[start[0]][start[1]]
+        return piece == 'K' and move == 'e1c1'

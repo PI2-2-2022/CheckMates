@@ -38,20 +38,49 @@ class Interface:
         # Pega qual a cor das peças da IA
         zonaMortaMove = AIMove[2:] + "m" + str(self.AIEatenPieces)
         communication.send_message("Movimento para zona morta: " + zonaMortaMove)
-        movements.game_movement(zonaMortaMove)
+        # movements.game_movement(zonaMortaMove)
         self.AIEatenPieces = self.AIEatenPieces + 1
+
+    def user_castling_move(self, castleMove):
+        self.UserCastlingAvailable = False
+        self.currentBitBoard = board.update_board(self.currentBitBoard, castleMove, 0)
+        self.currentBoard = board.update_board(self.currentBoard, castleMove)
+        communication.send_message("Mova a torre para completar o hawk!")
+        while True:
+            expectedBitBoard = communication.request_bitBoard()
+            if expectedBitBoard == self.currentBitBoard:
+                break
+        return
+
+    def AI_castling_move(self, castleMove, message):
+        self.AICastlingAvailable = False
+        self.currentBitBoard = board.update_board(self.currentBitBoard, castleMove, 0)
+        self.currentBoard = board.update_board(self.currentBoard, castleMove)
+        # movements.game_movement(castleMove)
+        communication.send_message(message)
 
     def make_AI_movement(self):
         self.isAIMovement = True
         self.stockfish.set_fen_position(self.currentFen)
         bestMove = self.stockfish.get_best_move()
 
+        # Castling logic
+        if self.AICastlingAvailable and board.is_AI_castling_right(
+            bestMove, self.currentBoard
+        ):
+            self.AI_castling_move("h8f8", "Hawk direito concluído!")
+        elif self.AICastlingAvailable and board.is_AI_castling_left(
+            bestMove, self.currentBoard
+        ):
+            self.AI_castling_move("a8d8", "Hawk esquerdo concluído!")
+
+        # Zona morta logic
         if board.destination_has_piece(bestMove, self.currentBoard):
             self.move_to_zona_morta(bestMove)
             communication.send_message("Movimento para zona morta concluido!")
 
         communication.send_message("Movimento IA: " + bestMove)
-        movements.game_movement(bestMove)
+        # movements.game_movement(bestMove)
         self.stockfish.make_moves_from_current_position([bestMove])
         self.currentFen = self.stockfish.get_fen_position()
         self.currentBitBoard = board.update_board(self.currentBitBoard, bestMove, 0)
@@ -61,7 +90,7 @@ class Interface:
         # Se a jogada do usuário e da IA forem válidas, salva os tabuleiros válidos que poderão ser utilizados no modo de recuperação
         self.lastValidBitBoard = self.currentBitBoard
         self.lastValidBoard = self.currentBoard
-        movements.calibra()
+        # movements.calibra()
 
     def game_loop(self):
         while (
@@ -95,6 +124,15 @@ class Interface:
                     self.currentBitBoard = bitBoard
                     self.currentBoard = board.update_board(self.currentBoard, move)
                     board.update_SVG(self.currentFen)
+
+                    if self.UserCastlingAvailable and board.is_user_castling_right(
+                        move, self.currentBoard
+                    ):
+                        self.user_castling_move("h1f1")
+                    elif self.UserCastlingAvailable and board.is_user_castling_left(
+                        move, self.currentBoard
+                    ):
+                        self.user_castling_move("a1d1")
 
                     # Verifica se o usuário fez um movimento que resulta no fim do jogo
                     if validation.validate_game_status(self.currentFen):
