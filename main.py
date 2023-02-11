@@ -1,3 +1,4 @@
+from Display import Display
 from stockfish import Stockfish
 from Interface import Interface
 from constants import STOCKFISH_PATH
@@ -8,6 +9,7 @@ from Communication import Communication
 interface = Interface()
 movements = Movements()
 communication = Communication()
+display = Display()
 
 
 def main():

@@ -36,7 +36,7 @@ class Interface:
 
     def move_to_zona_morta(self, AIMove):
         # Pega qual a cor das peças da IA
-        zonaMortaMove = (AIMove[2:] + "m" + str(self.AIEatenPieces))
+        zonaMortaMove = AIMove[2:] + "m" + str(self.AIEatenPieces)
         communication.send_message("Movimento para zona morta: " + zonaMortaMove)
         movements.game_movement(zonaMortaMove)
         self.AIEatenPieces = self.AIEatenPieces + 1
@@ -121,13 +121,13 @@ class Interface:
         board.print_list_of_lists(bitBoard)
         self.stockfish = stockfish
 
-        # Caso o tabuleiro incial não seja válido, manda uma mensagem para o display
-        # if not board.is_initial_board(bitBoard):
-        #     communication.send_message(
-        #         "Tabuleiro inicial inválido! Verifique ou reorganize as peças."
-        #     )
-        #     self.start_game(stockfish)
-        # else:
-        communication.send_message("Jogo iniciado!")
-        board.update_SVG(self.currentFen)
-        self.game_loop()
+        #  Caso o tabuleiro incial não seja válido, manda uma mensagem para o display
+        if not board.is_initial_board(bitBoard):
+            communication.send_message(
+                "Tabuleiro inicial inválido! Verifique ou reorganize as peças."
+            )
+            self.start_game(stockfish)
+        else:
+            communication.send_message("Jogo iniciado!")
+            board.update_SVG(self.currentFen)
+            self.game_loop()
