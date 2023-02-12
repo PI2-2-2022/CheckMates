@@ -30,7 +30,7 @@ class Display(ctk.CTk):
         self.level_var = ctk.IntVar(value=1)
         self.color_var = ctk.StringVar(value="w")
         self.theme = ctk.StringVar(value="Dark")
-        # self.attributes("-fullscreen", True)
+        self.attributes("-fullscreen", True)
 
         self.current_path = os.path.dirname(os.path.realpath(__file__))
         self.load_images()
@@ -333,7 +333,6 @@ class Display(ctk.CTk):
             master=self.game_msg_frame,
             text="Status do jogo:",
             font=ctk.CTkFont(size=14, weight="bold"),
-            justify=tk.LEFT,
         )
         self.msg_status_title.pack(side="top", pady=(10, 0))
 
@@ -342,7 +341,6 @@ class Display(ctk.CTk):
             text=self.message[0],
             wraplength=220,
             font=ctk.CTkFont(size=14, weight="normal"),
-            justify=tk.LEFT,
         )
         self.msg_status.pack(side="top", pady=(2, 5))
 
@@ -350,7 +348,6 @@ class Display(ctk.CTk):
             master=self.game_msg_frame,
             text=f"Movimento da IA: {self.message[1]}",
             font=ctk.CTkFont(size=14, weight="bold"),
-            justify=tk.LEFT,
         )
         self.msg_IA.pack(side="top", pady=5)
 
@@ -358,14 +355,11 @@ class Display(ctk.CTk):
             master=self.game_msg_frame,
             text=f"Movimento do usuário: {self.message[2]}",
             font=ctk.CTkFont(size=14, weight="bold"),
-            justify=tk.LEFT,
         )
         self.msg_user.pack(side="top", pady=5)
 
     def give_up(self):
-        answer = messagebox.askyesno(
-            "1", "Tem certeza que quer desistir do jogo?"
-        )
+        answer = messagebox.askyesno("", "Tem certeza que quer desistir do jogo?")
         if answer:
             self.go_to_home()
 
@@ -449,12 +443,6 @@ class Display(ctk.CTk):
         )
 
     def start_threads(self):
-        with open("message.txt", "w") as file:
-            file.write(str([" ", " ", " "]))
-        with open("bitboard.txt", "w") as file:
-            file.write(str([[]]))
-        self.message = [" ", " ", " "]
-
         self.game = Game(self.color_var.get(), self.level_var.get())
         self.stop_threads = False
         self.game.stopGame = False
@@ -466,6 +454,11 @@ class Display(ctk.CTk):
         self.game_th.start()
 
     def start_game_frame(self):
+        with open("message.txt", "w") as file:
+            file.write(str([" ", " ", " "]))
+        with open("bitboard.txt", "w") as file:
+            file.write(str([[]]))
+        self.message = [" ", " ", " "]
         self.game_screen()
 
         while not self.stop_threads:

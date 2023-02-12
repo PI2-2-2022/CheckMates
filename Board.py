@@ -77,7 +77,7 @@ class Board:
             return False
 
         # Pega qual a cor das peças do usuário
-        turn = 'w' if 'w' in currentFen else 'b'
+        turn = "w" if "w" in currentFen else "b"
 
         # Pega as coordenadas da origem do movimento
         coords = self.move_to_coords(move)
@@ -100,9 +100,9 @@ class Board:
         piece = currentBoard[x][y]
         return not piece == " "
 
-    def is_castling(self, move, color, board):
-        castlingMoves = ['e1g1', 'e1b1', 'e8g8', 'e8b8']
-        king = ['k', 'K']
+    def is_castling(self, move, board):
+        castlingMoves = ["e1g1", "e1b1", "e8g8", "e8b8"]
+        king = ["k", "K"]
 
         coords = self.move_to_coords(move)
         piece = board[coords[1][0]][coords[1][1]]

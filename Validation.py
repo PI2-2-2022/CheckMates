@@ -25,7 +25,7 @@ class Validation:
             message = "Peças insuficientes! Empatou..."
 
         if message:
-            communication.send_message(message)
+            communication.update_status_message(message)
 
         return (
             board.is_checkmate()
