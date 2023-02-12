@@ -443,9 +443,13 @@ class Display(ctk.CTk):
         )
 
     def start_threads(self):
+        with open("message.txt", "w") as file:
+            file.write(str([" ", " ", " "]))
+        with open("bitboard.txt", "w") as file:
+            file.write(str([[]]))
+
         self.game = Game(self.color_var.get(), self.level_var.get())
         self.stop_threads = False
-        self.game.stopGame = False
 
         self.game_frame_th = threading.Thread(target=self.start_game_frame)
         self.game_frame_th.start()
@@ -454,11 +458,6 @@ class Display(ctk.CTk):
         self.game_th.start()
 
     def start_game_frame(self):
-        with open("message.txt", "w") as file:
-            file.write(str([" ", " ", " "]))
-        with open("bitboard.txt", "w") as file:
-            file.write(str([[]]))
-        self.message = [" ", " ", " "]
         self.game_screen()
 
         while not self.stop_threads:

@@ -12,13 +12,13 @@ class Validation:
         board = chess.Board(currentFen)
         message = None
 
-        if board.is_check():
-            message = "Em check!"
-        elif board.is_checkmate():
+        if board.is_checkmate():
             if board.turn == "w":
                 message = "Checkmate! Brancas ganharam."
             else:
                 message = "Checkmate! Pretas ganharam."
+        elif board.is_check():
+            message = "Em check!"
         elif board.is_stalemate():
             message = "Stale Mate! Empatou..."
         elif board.is_insufficient_material():

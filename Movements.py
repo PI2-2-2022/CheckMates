@@ -2,6 +2,7 @@ from Communication import Communication
 
 communication = Communication()
 
+
 class Movements:
     offset = 30
 
@@ -13,13 +14,13 @@ class Movements:
         return
 
     def move_to_coords(self, move):
-        if move[0] == 'm':
+        if move[0] == "m":
             num = int(move[1:])
-            x = 5 if(num < 9) else 15
-            y = (num + 1) * 10 if(num < 9) else (num - 7) * 10
+            x = 5 if (num < 9) else 15
+            y = (num + 1) * 10 if (num < 9) else (num - 7) * 10
             return [x, y]
 
-        column = ord(move[0]) - ord('a') + 1
+        column = ord(move[0]) - ord("a") + 1
         row = int(move[1])
         x = (5 + column * 10) - 10
         y = (8 - row) * 10
@@ -102,7 +103,6 @@ class Movements:
             ).rjust(3, "0")
             current_coordinates[0] += abs(horizontal_diff)
 
-
         if vertical_diff < 0:
             vertical_move = str(abs(vertical_diff)) + " U"
             vertical_move_string = Movements_dict["U"] + str(abs(vertical_diff)).rjust(
@@ -116,7 +116,6 @@ class Movements:
             )
             current_coordinates[1] += abs(vertical_diff)
 
-
         if end_coordinates[0] > current_coordinates[0]:
             last_half_move = "5 R"
             last_half_move_string = Movements_dict["R"] + "005"
@@ -126,7 +125,6 @@ class Movements:
             last_half_move_string = Movements_dict["L"] + "005"
             current_coordinates[0] -= 5
 
-
         return [
             first_half_move_string,
             horizontal_move_string,
@@ -135,8 +133,8 @@ class Movements:
         ]
 
     def game_movement(self, move):
-        start = move[:2]
-        end = move[2:]
+        start = f"{move[0]}{move[1]}"
+        end = f"{move[2]}{move[3]}"
         self.set_cnc_on_piece(start)
         communication.simple_comm("4000", 2)
         squares = self.squares_to_move(start, end)

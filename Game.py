@@ -45,7 +45,18 @@ class Game:
             self.make_AI_movement()
 
         self.game_loop()
+        # depois que o jogo é interrompido reseta as variáveis
         communication.message = ["", "", ""]
+        self.lastValidBitBoard = INITIAL_BIT_BOARD
+        self.currentBitBoard = INITIAL_BIT_BOARD
+        self.currentBoard = INITIAL_BOARD
+        self.currentFen = STARTING_FEN
+        self.isAIMovement = False
+        self.AIEatenPieces = 1
+        self.stockfish = None
+        self.stopGame = False
+        self.userCastlingAvailable = True
+        self.AICastlingAvailable = True
 
     def game_loop(self):
         while (
@@ -102,15 +113,13 @@ class Game:
                 "Debug Log File": "",
                 "Contempt": 0,
                 "Min Split Depth": 0,
-                # More threads will make the engine stronger, but should be kept at less than the number of logical processors on your computer.
                 "Threads": 1,
                 "Ponder": "false",
-                # Default size is 16 MB. It's recommended that you increase this value, but keep it as some power of 2. E.g., if you're fine using 2 GB of RAM, set Hash to 2048 (11th power of 2).
                 "Hash": 512,
                 "MultiPV": 1,
                 "Skill Level": self.level,
                 "Move Overhead": 10,
-                "Minimum Thinking Time": self.level * 1.5,
+                "Minimum Thinking Time": self.level,
                 "Slow Mover": 100,
                 "UCI_Chess960": "false",
                 "UCI_LimitStrength": "false",
@@ -121,7 +130,6 @@ class Game:
     def calibrar_motor(self):
         communication.update_status_message("Calibrando motor...")
         movements.calibrar_motor()
-        time.sleep(1)
         communication.update_status_message("Motor calibrado!")
 
     def request_bitboard(self):
@@ -187,23 +195,23 @@ class Game:
         self.stockfish.set_fen_position(self.currentFen)
         bestMove = self.stockfish.get_best_move()
 
-        # Castling logic
-        if self.AICastlingAvailable and board.is_castling(bestMove, self.currentBoard):
-            self.AI_castling_move(bestMove)
-
         # Zona morta logic
         if board.destination_has_piece(bestMove, self.currentBoard):
             self.move_to_zona_morta(bestMove)
 
-        communication.update_AI_move(bestMove)
-        movements.game_movement(bestMove)
         self.stockfish.make_moves_from_current_position([bestMove])
         self.currentFen = self.stockfish.get_fen_position()
         self.currentBitBoard = board.update_board(self.currentBitBoard, bestMove, 0)
         self.currentBoard = board.update_board(self.currentBoard, bestMove)
         board.update_SVG(self.currentFen)
-
         # Se a jogada do usuário e da IA forem válidas, salva os tabuleiros válidos que poderão ser utilizados no modo de recuperação
         self.lastValidBitBoard = self.currentBitBoard
         self.lastValidBoard = self.currentBoard
+
+        # Castling logic
+        if self.AICastlingAvailable and board.is_castling(bestMove, self.currentBoard):
+            self.AI_castling_move(bestMove)
+
+        communication.update_AI_move(bestMove)
+        movements.game_movement(bestMove)
         self.calibrar_motor()
