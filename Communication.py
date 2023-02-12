@@ -11,6 +11,7 @@ serializer = serial.Serial("/dev/ttyUSB0", 9600)
 
 class Communication:
     def __init__(self) -> None:
+        self.message = [" ", " ", " "]
         pass
 
     def serializer_comunication(self, message):
@@ -56,9 +57,21 @@ class Communication:
         # board.print_list_of_lists(final)
         return final
 
-    def send_message(self, message):
+    def update_message(self):
         with open("message.txt", "w") as file:
-            file.write(f"'{message}'")
+            file.write(str(self.message))
+
+    def update_status_message(self, message):
+        self.message[0] = message
+        self.update_message()
+
+    def update_AI_move(self, message):
+        self.message[1] = message
+        self.update_message()
+
+    def update_user_move(self, message):
+        self.message[2] = message
+        self.update_message()
 
     def request_bitBoard(self):
         # Le a bitboard da eletronica

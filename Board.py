@@ -1,7 +1,7 @@
 import chess
 import chess.svg
 from pathlib import Path
-from constants import INITIAL_BIT_BOARD, WHITE_PIECES, BLACK_PIECES
+from Constants import INITIAL_BIT_BOARD, WHITE_PIECES, BLACK_PIECES
 
 
 class Board:
@@ -72,13 +72,12 @@ class Board:
             print(lst)
 
     def is_move_to_eat_piece(self, move, currentBoard, currentFen):
-        # TODO comer uma peça errada é um problema!
         # Verifica se a peça não tem destino, caso tenha é um movimento normal e retorna falso
         if not "None" in move:
             return False
 
         # Pega qual a cor das peças do usuário
-        turn = currentFen[-12]
+        turn = 'w' if 'w' in currentFen else 'b'
 
         # Pega as coordenadas da origem do movimento
         coords = self.move_to_coords(move)
@@ -99,29 +98,13 @@ class Board:
         y = coords[1][1]
 
         piece = currentBoard[x][y]
-        # print("peça na coordenada [" + str(x) + "," + str(y) + "]:", piece)
         return not piece == " "
 
-    def is_AI_castling_right(self, move, board):
-        coords = self.move_to_coords(move)
-        start = coords[0]
-        piece = board[start[0]][start[1]]
-        return piece == 'k' and move == 'e8g8'
+    def is_castling(self, move, color, board):
+        castlingMoves = ['e1g1', 'e1b1', 'e8g8', 'e8b8']
+        king = ['k', 'K']
 
-    def is_AI_castling_left(self, move, board):
         coords = self.move_to_coords(move)
-        start = coords[0]
-        piece = board[start[0]][start[1]]
-        return piece == 'k' and move == 'e8c8'
+        piece = board[coords[1][0]][coords[1][1]]
 
-    def is_user_castling_right(self, move, board):
-        coords = self.move_to_coords(move)
-        start = coords[0]
-        piece = board[start[0]][start[1]]
-        return piece == 'K' and move == 'e1g1'
-
-    def is_user_castling_left(self, move, board):
-        coords = self.move_to_coords(move)
-        start = coords[0]
-        piece = board[start[0]][start[1]]
-        return piece == 'K' and move == 'e1c1'
+        return move in castlingMoves and piece in king

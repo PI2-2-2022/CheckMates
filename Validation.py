@@ -5,35 +5,20 @@ communication = Communication()
 
 
 class Validation:
-    # Classe responsável por administrar as regras e violações do jogo
-    stopGame = False
-    def __init__(self) -> None:
+    def __init__(self):
         pass
 
-    def set_stop_game(self, value):
-        print(value)
-        self.stopGame = value
-
-    def get_stop_game(self):
-        print(self.stopGame)
-        return self.stopGame
-
-    def validate_game_status(self, currentFen: str) -> bool:
+    def validate_game_status(self, currentFen):
         board = chess.Board(currentFen)
         message = None
 
         if board.is_check():
-            message = (
-                "Você está em Check!"
-                if chess.Board(currentFen).turn == "w"
-                else "Inteligência Artificial em Check!"
-            )
+            message = "Em check!"
         elif board.is_checkmate():
-            message = (
-                "Checkmate, você ganhou!"
-                if chess.Board(currentFen).turn == "w"
-                else "Checkmate, Inteligência Artificial ganhou!"
-            )
+            if board.turn == "w":
+                message = "Checkmate! Brancas ganharam."
+            else:
+                message = "Checkmate! Pretas ganharam."
         elif board.is_stalemate():
             message = "Stale Mate! Empatou..."
         elif board.is_insufficient_material():
@@ -48,19 +33,7 @@ class Validation:
             or board.is_insufficient_material()
         )
 
-    def is_stalemate(self, currentFen: str) -> bool:
-        board = chess.Board(currentFen)
-        return board.is_stalemate()
-
-    def is_insufficient_material(self, currentFen: str) -> bool:
-        board = chess.Board(currentFen)
-        return board.is_insufficient_material()
-
-    def is_checkmate(self, fen: str) -> bool:
-        board = chess.Board(fen)
-        return board.is_checkmate()
-
-    def is_valid_move(self, move: str, currentFen: str) -> bool:
+    def is_valid_move(self, move, currentFen):
         board = chess.Board(currentFen)
         try:
             board.push_uci(move)

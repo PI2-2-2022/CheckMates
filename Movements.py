@@ -8,8 +8,7 @@ class Movements:
     def __init__(self) -> None:
         pass
 
-    def calibra(self):
-        # print("calibrado")
+    def calibrar_motor(self):
         communication.simple_comm("9000", 2)
         return
 
@@ -17,7 +16,7 @@ class Movements:
         if move[0] == 'm':
             num = int(move[1:])
             x = 5 if(num < 9) else 15
-            y = (num + 1) * 10 if(num < 9) else (num - 7) * 10 
+            y = (num + 1) * 10 if(num < 9) else (num - 7) * 10
             return [x, y]
 
         column = ord(move[0]) - ord('a') + 1
@@ -28,15 +27,11 @@ class Movements:
 
     def set_cnc_on_piece(self, place_to_go):
         local_now = communication.simple_comm("6000", 2)
-        # print("local atual = ", local_now)
         to_go = self.move_to_coords(place_to_go)
         x_to_go = to_go[0]
         Y_to_go = to_go[1]
-        # print("quero ir: ", to_go)
-        # print("quero ir passos: ", x_to_go, Y_to_go)
         x_to_move = x_to_go - int(local_now[0][0])
         y_to_move = Y_to_go - int(local_now[0][1])
-        # print("temos que andar: x", x_to_move, " y", y_to_move)
         x_final = ""
         y_final = ""
         if x_to_move > 0:
@@ -53,8 +48,6 @@ class Movements:
                 int(abs(y_to_move) if abs(y_to_move) <= 70 else 70)
             ).rjust(3, "0")
 
-        # print(to_go)
-        # print("tem que andar", x_final, y_final)
         if x_final != "100" and x_final != "300":
             communication.simple_comm(x_final, 3)
         if y_final != "200" and y_final != "500":
@@ -89,8 +82,6 @@ class Movements:
                 first_half_move = "5 D"
                 first_half_move_string = Movements_dict["D"] + "005"
                 current_coordinates[1] += 5
-        # print(first_half_move)
-        # print(current_coordinates)
         # Acaba aqui o primeiro movimento
 
         if horizontal_diff != 0:
@@ -111,8 +102,6 @@ class Movements:
             ).rjust(3, "0")
             current_coordinates[0] += abs(horizontal_diff)
 
-        # print(horizontal_move)
-        # print(current_coordinates)
 
         if vertical_diff < 0:
             vertical_move = str(abs(vertical_diff)) + " U"
@@ -127,8 +116,6 @@ class Movements:
             )
             current_coordinates[1] += abs(vertical_diff)
 
-        # print(vertical_move)
-        # print(current_coordinates)
 
         if end_coordinates[0] > current_coordinates[0]:
             last_half_move = "5 R"
@@ -139,8 +126,6 @@ class Movements:
             last_half_move_string = Movements_dict["L"] + "005"
             current_coordinates[0] -= 5
 
-        # print(last_half_move)
-        # print(current_coordinates)
 
         return [
             first_half_move_string,
@@ -152,12 +137,9 @@ class Movements:
     def game_movement(self, move):
         start = move[:2]
         end = move[2:]
-        # print("chegou", start, end)
         self.set_cnc_on_piece(start)
         communication.simple_comm("4000", 2)
-        # print("vai ser", start, end)
         squares = self.squares_to_move(start, end)
-        # print('squares: ', squares)
         for square in squares:
             if (
                 square != "100"

@@ -4,7 +4,7 @@ import threading
 import time
 import tkinter as tk
 from tkinter import messagebox
-from Interface import Interface
+from Game import Game
 import customtkinter as ctk
 from PIL import Image
 
@@ -16,14 +16,13 @@ ctk.set_appearance_mode("Dark")
 
 
 class Display(ctk.CTk):
-    stockfish = None
-    bitBoard = [[]]
-    message = ""
-    stop_threads = False
-    interface = None
-
     def __init__(self):
         super().__init__()
+        self.stockfish = None
+        self.bitBoard = [[]]
+        self.message = [" ", " ", " "]
+        self.stop_threads = False
+        self.game = None
 
         self.title("Checkmates")
         self.geometry(f"{WIDTH}x{HEIGHT}")
@@ -156,24 +155,6 @@ class Display(ctk.CTk):
         )
         self.back_button.grid(row=5, column=0, sticky="s")
 
-    def go_to_home(self):
-        self.stop_threads = True
-        if self.interface:
-            self.interface.stopGame = True
-        self.message = ""
-        self.bitBoard = [[]]
-
-        try:
-            self.config_frame.grid_forget()
-        except:
-            er = ""
-        try:
-            self.game_frame.grid_forget()
-        except:
-            er = ""
-
-        self.home()
-
     def change_theme(self):
         ctk.set_appearance_mode(self.theme.get())
 
@@ -288,7 +269,7 @@ class Display(ctk.CTk):
 
         return
 
-    def game(self):
+    def game_screen(self):
         self.home_frame.grid_forget()
 
         self.game_frame = ctk.CTkFrame(self)
@@ -303,7 +284,7 @@ class Display(ctk.CTk):
         )
         self.bitboard_title.grid(row=0, column=0, pady=(10, 5))
 
-        self.game_board()
+        self.game_screen_board()
 
         self.game_msg_frame = ctk.CTkFrame(master=self.game_frame, corner_radius=0)
         self.game_msg_frame.pack(side="left", fill="both", expand=True)
@@ -315,7 +296,7 @@ class Display(ctk.CTk):
         )
         self.msg_title.pack(side="top", pady=(10), padx=(30))
 
-        self.game_msg()
+        self.game_screen_msg()
 
         self.btn_give_up = ctk.CTkButton(
             master=self.game_msg_frame,
@@ -327,7 +308,7 @@ class Display(ctk.CTk):
         )
         self.btn_give_up.pack(side="bottom", padx=10, pady=(10, 45))
 
-    def game_board(self):
+    def game_screen_board(self):
         self.bitboard_frame = ctk.CTkFrame(master=self.game_board_frame)
         self.bitboard_frame.grid_rowconfigure(8, weight=1)
         self.bitboard_frame.grid_columnconfigure(8, weight=1)
@@ -339,27 +320,72 @@ class Display(ctk.CTk):
 
         self.bitboard_frame.grid(row=1, column=0, pady=(15, 40), padx=(10, 10))
 
-    def game_msg(self):
+    def game_screen_msg(self):
         try:
-            self.msg.pack_forget()
+            self.msg_status_title.pack_forget()
+            self.msg_status.pack_forget()
+            self.msg_IA.pack_forget()
+            self.msg_user.pack_forget()
         except:
             e = ""
 
-        self.msg = ctk.CTkLabel(
+        self.msg_status_title = ctk.CTkLabel(
             master=self.game_msg_frame,
-            text=self.message,
-            wraplength=220,
-            font=ctk.CTkFont(size=13, weight="normal"),
+            text="Status do jogo:",
+            font=ctk.CTkFont(size=14, weight="bold"),
             justify=tk.LEFT,
         )
-        self.msg.pack(side="top", pady=(10, 5))
+        self.msg_status_title.pack(side="top", pady=(10, 0))
+
+        self.msg_status = ctk.CTkLabel(
+            master=self.game_msg_frame,
+            text=self.message[0],
+            wraplength=220,
+            font=ctk.CTkFont(size=14, weight="normal"),
+            justify=tk.LEFT,
+        )
+        self.msg_status.pack(side="top", pady=(2, 5))
+
+        self.msg_IA = ctk.CTkLabel(
+            master=self.game_msg_frame,
+            text=f"Movimento da IA: {self.message[1]}",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            justify=tk.LEFT,
+        )
+        self.msg_IA.pack(side="top", pady=5)
+
+        self.msg_user = ctk.CTkLabel(
+            master=self.game_msg_frame,
+            text=f"Movimento do usuário: {self.message[2]}",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            justify=tk.LEFT,
+        )
+        self.msg_user.pack(side="top", pady=5)
 
     def give_up(self):
         answer = messagebox.askyesno(
-            "Desistindo :(", "Tem certeza que quer desistir do jogo?"
+            "1", "Tem certeza que quer desistir do jogo?"
         )
         if answer:
             self.go_to_home()
+
+    def go_to_home(self):
+        self.stop_threads = True
+        if self.game:
+            self.game.stopGame = True
+        self.message = ""
+        self.bitBoard = [[]]
+
+        try:
+            self.config_frame.grid_forget()
+        except:
+            er = ""
+        try:
+            self.game_frame.grid_forget()
+        except:
+            er = ""
+
+        self.home()
 
     def load_images(self):
         self.background = ctk.CTkImage(
@@ -423,17 +449,24 @@ class Display(ctk.CTk):
         )
 
     def start_threads(self):
-        self.interface = Interface(self.color_var.get(), self.level_var.get())
+        with open("message.txt", "w") as file:
+            file.write(str([" ", " ", " "]))
+        with open("bitboard.txt", "w") as file:
+            file.write(str([[]]))
+        self.message = [" ", " ", " "]
+
+        self.game = Game(self.color_var.get(), self.level_var.get())
         self.stop_threads = False
-        self.interface.stopGame = False
+        self.game.stopGame = False
 
         self.game_frame_th = threading.Thread(target=self.start_game_frame)
         self.game_frame_th.start()
-        self.game_th = threading.Thread(target=self.interface.start_game)
+
+        self.game_th = threading.Thread(target=self.game.start_game)
         self.game_th.start()
 
     def start_game_frame(self):
-        self.game()
+        self.game_screen()
 
         while not self.stop_threads:
             with open("message.txt", "r") as file:
@@ -444,8 +477,8 @@ class Display(ctk.CTk):
                 content = file.read()
             self.bitBoard = ast.literal_eval(content)
 
-            self.game_msg()
-            self.game_board()
+            self.game_screen_board()
+            self.game_screen_msg()
             time.sleep(1)
 
 
