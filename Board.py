@@ -108,3 +108,16 @@ class Board:
         piece = board[coords[1][0]][coords[1][1]]
 
         return move in castlingMoves and piece in king
+
+    def is_pawn_to_queen(self, move, board, color):
+        coords = self.move_to_coords(move)
+        piece = board[coords[0][0]][coords[0][1]]
+
+        expectedPawn = "P" if color == "w" else "p"
+        expectedMove = "x7x8" if color == "w" else "x2x1"
+
+        return (
+            piece == expectedPawn
+            and move[1] == expectedMove[1]
+            and move[3] == expectedMove[3]
+        )

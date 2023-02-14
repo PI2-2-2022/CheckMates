@@ -8,7 +8,7 @@ class Validation:
     def __init__(self):
         pass
 
-    def validate_game_status(self, currentFen):
+    def end_game(self, currentFen):
         board = chess.Board(currentFen)
         message = None
 
@@ -32,11 +32,3 @@ class Validation:
             or board.is_stalemate()
             or board.is_insufficient_material()
         )
-
-    def is_valid_move(self, move, currentFen):
-        board = chess.Board(currentFen)
-        try:
-            board.push_uci(move)
-            return True
-        except ValueError:
-            return False

@@ -15,6 +15,7 @@ validation = Validation()
 class Game:
     def __init__(self, color, level):
         self.lastValidBitBoard = INITIAL_BIT_BOARD
+        self.lastValidBoard = INITIAL_BOARD
         self.currentBitBoard = INITIAL_BIT_BOARD
         self.currentBoard = INITIAL_BOARD
         self.currentFen = STARTING_FEN
@@ -59,9 +60,7 @@ class Game:
         self.AICastlingAvailable = True
 
     def game_loop(self):
-        while (
-            not validation.validate_game_status(self.currentFen) and not self.stopGame
-        ):
+        while not validation.end_game(self.currentFen) and not self.stopGame:
             bitBoard = self.request_bitboard()
             # Caso os tabuleiros sejam diferentes e a flag da IA seja true, significa que o motor está movimentando a peça
             if not bitBoard == self.currentBitBoard and self.isAIMovement:
@@ -75,11 +74,18 @@ class Game:
                 # Pega o movimento no formato "e2e4" pela diferença da bitboard
                 move = board.coords_to_move(bitBoard, self.currentBitBoard)
                 communication.update_user_move(move)
+
                 # Verifica se o movimento foi um "pré-movimento" para comer uma peça (movimentar uma peça que não é do usuário para fora do tabuleiro)
                 if board.is_move_to_eat_piece(move, self.currentBoard, self.currentFen):
                     communication.update_status_message("Usuário comendo uma peça!")
                     self.currentBitBoard = bitBoard
-                elif validation.is_valid_move(move, self.currentFen):
+                    continue
+
+                # Veririca se o movimento é de um peão e se resulta nele se tornar uma rainha
+                if board.is_pawn_to_queen(move, self.currentBoard, self.color):
+                    move = f"{move}q"
+
+                try:
                     # Realizando o movimento do usuario na stockfish
                     self.stockfish.make_moves_from_current_position([move])
                     self.currentFen = self.stockfish.get_fen_position()
@@ -93,37 +99,40 @@ class Game:
                         self.user_castling_move(move)
 
                     # Verifica se o usuário fez um movimento que resulta no fim do jogo
-                    if validation.validate_game_status(self.currentFen):
+                    if validation.end_game(self.currentFen):
                         break
 
                     self.make_AI_movement()
-                elif move[2:] == "None":
-                    communication.update_status_message("Usuário se movimentando!")
-                else:
-                    communication.update_status_message(
-                        "Movimento inválido!\nVolte o tabuleiro para o estado anterior."
-                    )
-                    self.recover_mode()
+                except:
+                    if move[2:] == "None":
+                        communication.update_status_message("Usuário se movimentando!")
+                    else:
+                        communication.update_status_message(
+                            "Movimento inválido!\nVolte o tabuleiro para o estado anterior."
+                        )
+                        self.recover_mode()
 
     def config_stockfish(self):
+        hash = 256
+        if self.level == 3:
+            hash = 512
+        elif self.level == 7:
+            hash = 768
+
         self.stockfish = Stockfish(
             STOCKFISH_PATH,
             depth=self.level,
             parameters={
                 "Debug Log File": "",
-                "Contempt": 0,
                 "Min Split Depth": 0,
                 "Threads": 1,
                 "Ponder": "false",
-                "Hash": 512,
+                "Hash": hash,
                 "MultiPV": 1,
                 "Skill Level": self.level,
                 "Move Overhead": 10,
-                "Minimum Thinking Time": self.level,
                 "Slow Mover": 100,
                 "UCI_Chess960": "false",
-                "UCI_LimitStrength": "false",
-                "UCI_Elo": 1350,
             },
         )
 
@@ -141,11 +150,8 @@ class Game:
     def recover_mode(self):
         self.currentBitBoard = self.lastValidBitBoard
         self.currentBoard = self.lastValidBoard
-        board.print_list_of_lists(self.lastValidBitBoard)
-        board.print_list_of_lists(self.lastValidBoard)
         while True:
             bitBoard = communication.request_bitBoard()
-            board.print_list_of_lists(bitBoard)
             if bitBoard == self.currentBitBoard:
                 communication.update_status_message(
                     "Tabuleiro recuperado!\n Jogue novamente"

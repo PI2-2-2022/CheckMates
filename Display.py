@@ -5,6 +5,7 @@ import time
 import tkinter as tk
 from tkinter import messagebox
 from Game import Game
+from Constants import INITIAL_BIT_BOARD
 import customtkinter as ctk
 from PIL import Image
 
@@ -19,7 +20,7 @@ class Display(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.stockfish = None
-        self.bitBoard = [[]]
+        self.bitBoard = INITIAL_BIT_BOARD
         self.message = [" ", " ", " "]
         self.stop_threads = False
         self.game = None
@@ -284,8 +285,6 @@ class Display(ctk.CTk):
         )
         self.bitboard_title.grid(row=0, column=0, pady=(10, 5))
 
-        self.game_screen_board()
-
         self.game_msg_frame = ctk.CTkFrame(master=self.game_frame, corner_radius=0)
         self.game_msg_frame.pack(side="left", fill="both", expand=True)
 
@@ -295,8 +294,6 @@ class Display(ctk.CTk):
             font=ctk.CTkFont(size=15, weight="bold"),
         )
         self.msg_title.pack(side="top", pady=(10), padx=(30))
-
-        self.game_screen_msg()
 
         self.btn_give_up = ctk.CTkButton(
             master=self.game_msg_frame,
@@ -367,8 +364,8 @@ class Display(ctk.CTk):
         self.stop_threads = True
         if self.game:
             self.game.stopGame = True
-        self.message = ""
-        self.bitBoard = [[]]
+        self.message = ["", "", ""]
+        self.bitBoard = INITIAL_BIT_BOARD
 
         try:
             self.config_frame.grid_forget()
@@ -461,17 +458,37 @@ class Display(ctk.CTk):
         self.game_screen()
 
         while not self.stop_threads:
-            with open("message.txt", "r") as file:
-                content = file.read()
-            self.message = ast.literal_eval(content)
+            try:
+                with open("message.txt", "r") as file:
+                    content = file.read()
+                newMsg = ast.literal_eval(content)
+                if not newMsg == self.message:
+                    self.message = newMsg
+                    self.game_screen_msg()
+            except:
+                self.message = [
+                    "Erro ao ler status do jogo",
+                    self.message[1],
+                    self.message[2],
+                ]
+                self.game_screen_msg()
 
-            with open("bitboard.txt", "r") as file:
-                content = file.read()
-            self.bitBoard = ast.literal_eval(content)
+            try:
+                with open("bitboard.txt", "r") as file:
+                    content = file.read()
+                newBitBoard = ast.literal_eval(content)
+                if not self.bitBoard == newBitBoard:
+                    self.bitBoard = newBitBoard
+                    self.game_screen_board()
+            except:
+                self.message = [
+                    "Erro ao ler bitboard",
+                    self.message[1],
+                    self.message[2],
+                ]
+                self.game_screen_board()
 
-            self.game_screen_board()
-            self.game_screen_msg()
-            time.sleep(1)
+            time.sleep(0.5)
 
 
 if __name__ == "__main__":
