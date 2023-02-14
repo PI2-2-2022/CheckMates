@@ -101,7 +101,7 @@ class Board:
         return not piece == " "
 
     def is_castling(self, move, board):
-        castlingMoves = ["e1g1", "e1b1", "e8g8", "e8b8"]
+        castlingMoves = ["e1g1", "e1c1", "e8g8", "e8c8"]
         king = ["k", "K"]
 
         coords = self.move_to_coords(move)
