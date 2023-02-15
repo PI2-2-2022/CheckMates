@@ -58,8 +58,9 @@ class Communication:
         return final
 
     def update_message(self):
-        with open("message.txt", "w") as file:
-            file.write(str(self.message))
+        print("Status do jogo: ", self.message[0])
+        print("Movimento IA: ", self.message[1])
+        print("Movimento Usuário: ", self.message[2])
 
     def update_status_message(self, message):
         self.message[0] = message
@@ -72,20 +73,3 @@ class Communication:
     def update_user_move(self, message):
         self.message[2] = message
         self.update_message()
-
-    def request_bitBoard(self):
-        # Le a bitboard da eletronica
-        raw = self.serializer_comunication("8000")
-
-        # Simula uma leitura de bitboard de um txt
-        # raw = self.get_bit_board_txt()
-
-        bitBoard = board.transform_raw_board(raw)
-        return bitBoard
-
-    def get_bit_board_txt(self):
-        time.sleep(2)
-        with open("bitboard_response.txt", "r") as file:
-            content = file.read()
-        bitBoard = ast.literal_eval(content)
-        return bitBoard

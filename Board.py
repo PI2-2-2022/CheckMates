@@ -1,7 +1,7 @@
 import chess
 import chess.svg
 from pathlib import Path
-from Constants import INITIAL_BIT_BOARD, WHITE_PIECES, BLACK_PIECES
+from Constants import WHITE_PIECES, BLACK_PIECES
 
 
 class Board:
@@ -13,20 +13,6 @@ class Board:
         with open(Path(__file__).parent.joinpath("game.svg"), mode="w") as img:
             img.write(chess.svg.board(board, size=350))
 
-    def coords_to_move(self, targetBitBoard, currentBitBoard):
-        to = None
-        origin = None
-        for idx, x in enumerate(targetBitBoard):
-            for idy, y in enumerate(x):
-                row = abs(idx - 8)
-                column = chr(idy + 97)
-                if targetBitBoard[idx][idy] == 0 and currentBitBoard[idx][idy] == 1:
-                    origin = f"{column}{row}"
-                elif targetBitBoard[idx][idy] == 1 and currentBitBoard[idx][idy] == 0:
-                    to = f"{column}{row}"
-
-        return f"{origin}{to}"
-
     def move_to_coords(self, move):
         col_map = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
         row_map = {str(i): 8 - i for i in range(1, 9)}
@@ -37,18 +23,6 @@ class Board:
         end_row = row_map.get(move[3], -1)
 
         return [[start_row, start_col], [end_row, end_col]]
-
-    def transform_raw_board(self, raw):
-        bitBoard = []
-        for item in raw:
-            row = [1 if x == "0" else 0 for x in item[1:-1]]
-            if len(row) == 8:
-                newrow = row[::-1]
-                bitBoard.append(newrow)
-        return bitBoard
-
-    def is_initial_board(self, bitBoard) -> bool:
-        return bitBoard == INITIAL_BIT_BOARD
 
     def update_board(self, currentBoard, move, emptyValue=" "):
         coords = self.move_to_coords(move)
